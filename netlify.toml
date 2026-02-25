@@ -1,9 +1,15 @@
 [build]
-  command = "npm run build"
-  publish = ".next"
+  publish = "."
 
-[build.environment]
-  NODE_VERSION = "20"
+[[redirects]]
+  from = "https://www.alaskaglow.com/*"
+  to = "https://alaskaglow.com/:splat"
+  status = 301
+  force = true
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
