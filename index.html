@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alaska Glow — Aurora Forecast for Tonight</title>
-<meta name="description" content="Will you see the northern lights tonight in Alaska? Real-time aurora forecast for Fairbanks, Anchorage, Palmer, Denali, Kenai, and Juneau. Simple, clear, no science degree needed.">
+<meta name="description" content="Will you see the northern lights tonight in Alaska? Real-time aurora forecast for Fairbanks, Anchorage, Palmer, Denali, Kenai, and Juneau with cloud cover and viewing conditions.">
 <meta property="og:title" content="Alaska Glow — Aurora Forecast for Tonight">
-<meta property="og:description" content="Will you see the northern lights tonight? Check your Alaska location now.">
+<meta property="og:description" content="Will you see the northern lights tonight? Real-time aurora conditions for 7 Alaska locations.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://alaskaglow.com">
 <meta property="og:site_name" content="Alaska Glow">
@@ -17,952 +17,659 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
 <style>
-:root {
-  --bg-deep: #050a0f;
-  --bg-card: #0c1a1f;
-  --bg-card-hover: #112228;
-  --green-glow: #2ecc71;
-  --yellow-glow: #f1c40f;
-  --orange-glow: #e67e22;
-  --red-glow: #e74c3c;
-  --text-primary: #e8f0f2;
-  --text-secondary: #8ba4ad;
-  --text-muted: #4a6670;
-  --aurora-green: #4ade80;
-  --aurora-teal: #2dd4bf;
-  --aurora-purple: #a78bfa;
-  --border: #1a2e35;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Outfit',sans-serif; background:var(--bg-deep); color:var(--text-primary); min-height:100vh; overflow-x:hidden; }
+:root{--bg:#050a0f;--card:#0c1a1f;--card-h:#112228;--grn:#2ecc71;--ylw:#f1c40f;--orn:#e67e22;--red:#e74c3c;--t1:#e8f0f2;--t2:#8ba4ad;--t3:#4a6670;--ag:#4ade80;--at:#2dd4bf;--ap:#a78bfa;--brd:#1a2e35}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+.abg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.ab{position:absolute;width:200%;height:300px;top:-80px;left:-50%;filter:blur(60px);animation:ad 20s ease-in-out infinite}
+.ab:nth-child(1){background:radial-gradient(ellipse at center,rgba(46,204,113,.12),rgba(45,212,191,.06) 30%,rgba(167,139,250,.04) 60%,transparent 80%)}
+.ab:nth-child(2){top:-40px;animation-delay:-7s;animation-duration:25s;opacity:.7;background:radial-gradient(ellipse at center,rgba(45,212,191,.1),rgba(167,139,250,.06) 40%,transparent 70%)}
+.ab:nth-child(3){top:-120px;animation-delay:-14s;animation-duration:30s;opacity:.5;background:radial-gradient(ellipse at center,rgba(167,139,250,.08),rgba(46,204,113,.04) 40%,transparent 70%)}
+@keyframes ad{0%,100%{transform:translateX(-10%) rotate(-2deg)}33%{transform:translateX(5%) rotate(1deg)}66%{transform:translateX(-5%) rotate(-1deg)}}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:tw 3s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.3}50%{opacity:.8}}
+.c{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 20px}
+header{padding:40px 0 16px;text-align:center}
+.logo{font-family:'Fraunces',serif;font-size:2.2rem;font-weight:700;background:linear-gradient(135deg,var(--ag),var(--at),var(--ap));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-.02em;margin-bottom:4px;cursor:pointer}
+.tagline{font-size:.95rem;color:var(--t2);font-weight:300}
 
-/* Aurora background */
-.aurora-bg { position:fixed; top:0;left:0;right:0;bottom:0; z-index:0; overflow:hidden; pointer-events:none; }
-.aurora-band { position:absolute; width:200%; height:300px; top:-80px; left:-50%; filter:blur(60px); animation:aurora-drift 20s ease-in-out infinite; }
-.aurora-band:nth-child(1) { background:radial-gradient(ellipse at center,rgba(46,204,113,0.12) 0%,rgba(45,212,191,0.06) 30%,rgba(167,139,250,0.04) 60%,transparent 80%); }
-.aurora-band:nth-child(2) { top:-40px; animation-delay:-7s; animation-duration:25s; opacity:0.7; background:radial-gradient(ellipse at center,rgba(45,212,191,0.1) 0%,rgba(167,139,250,0.06) 40%,transparent 70%); }
-.aurora-band:nth-child(3) { top:-120px; animation-delay:-14s; animation-duration:30s; opacity:0.5; background:radial-gradient(ellipse at center,rgba(167,139,250,0.08) 0%,rgba(46,204,113,0.04) 40%,transparent 70%); }
-@keyframes aurora-drift { 0%,100%{transform:translateX(-10%) rotate(-2deg)} 33%{transform:translateX(5%) rotate(1deg)} 66%{transform:translateX(-5%) rotate(-1deg)} }
-.star { position:absolute; width:2px; height:2px; background:white; border-radius:50%; animation:twinkle 3s ease-in-out infinite; }
-@keyframes twinkle { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+/* Dark/daylight banner */
+.now-banner{text-align:center;padding:10px 16px;border-radius:10px;font-size:.85rem;margin:8px 0 0}
+.now-banner.is-dark{background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.2);color:var(--ag)}
+.now-banner.is-light{background:rgba(241,196,15,.06);border:1px solid rgba(241,196,15,.15);color:var(--ylw)}
+.now-banner.is-summer{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.15);color:var(--ap)}
 
-.container { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:0 20px; }
-header { padding:40px 0 20px; text-align:center; }
-.logo { font-family:'Fraunces',serif; font-size:2.2rem; font-weight:700; background:linear-gradient(135deg,var(--aurora-green),var(--aurora-teal),var(--aurora-purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; letter-spacing:-0.02em; margin-bottom:4px; cursor:pointer; }
-.tagline { font-size:0.95rem; color:var(--text-secondary); font-weight:300; }
+.loading{text-align:center;padding:80px 20px}
+.spinner{width:40px;height:40px;border:3px solid var(--brd);border-top-color:var(--ag);border-radius:50%;animation:sp 1s linear infinite;margin:0 auto 16px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.sl{font-size:.8rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--t3);margin:32px 0 16px;padding-left:4px}
+.upd{text-align:center;font-size:.75rem;color:var(--t3);margin-bottom:8px}
 
-/* Loading */
-.loading-state { text-align:center; padding:80px 20px; }
-.loading-spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--aurora-green); border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 16px; }
-@keyframes spin { to{transform:rotate(360deg)} }
+/* Hero */
+.hero{margin:20px 0;padding:28px;border-radius:20px;text-align:center;cursor:pointer;transition:transform .2s}
+.hero:hover{transform:scale(1.01)}
+.lv-g{background:linear-gradient(135deg,rgba(46,204,113,.15),rgba(45,212,191,.08));border:1px solid rgba(46,204,113,.3)}
+.lv-p{background:linear-gradient(135deg,rgba(241,196,15,.12),rgba(241,196,15,.04));border:1px solid rgba(241,196,15,.25)}
+.lv-c{background:linear-gradient(135deg,rgba(230,126,34,.12),rgba(230,126,34,.04));border:1px solid rgba(230,126,34,.25)}
+.lv-u{background:linear-gradient(135deg,rgba(231,76,60,.1),rgba(231,76,60,.03));border:1px solid rgba(231,76,60,.2)}
+.hero-ey{font-size:.8rem;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--t2);margin-bottom:10px}
+.hero-loc{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:500;margin-bottom:6px}
+.hero-v{font-size:1.02rem;margin-bottom:14px;line-height:1.5}
+.hero-d{font-size:.83rem;color:var(--t2)}.hero-d strong{color:var(--t1);font-weight:500}
 
-/* Section label */
-.section-label { font-size:0.8rem; font-weight:500; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); margin:32px 0 16px; padding-left:4px; }
+/* Outlook */
+.olstrip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.olcard{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:14px 12px;text-align:center;transition:all .2s}
+.olcard:hover{background:var(--card-h)}
+.olcard.ist{border-color:rgba(255,255,255,.12)}
+.olday{font-size:.72rem;font-weight:500;color:var(--t2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em}
+.oldot{width:16px;height:16px;border-radius:50%;margin:0 auto 8px}
+.oldot.dg{background:var(--grn);box-shadow:0 0 14px var(--grn)}.oldot.dp{background:var(--ylw);box-shadow:0 0 14px var(--ylw)}
+.oldot.dc{background:var(--orn);box-shadow:0 0 14px var(--orn)}.oldot.du{background:var(--red);box-shadow:0 0 10px var(--red)}
+.ollbl{font-size:.82rem;font-weight:500;margin-bottom:3px}.oldesc{font-size:.72rem;color:var(--t3);line-height:1.4}
 
-/* Last updated */
-.last-updated { text-align:center; font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; }
+/* Location cards */
+.lgrid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:24px}
+@media(min-width:600px){.lgrid{grid-template-columns:1fr 1fr}}
+.lcard{background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.lcard:hover{background:var(--card-h);transform:translateY(-2px);border-color:rgba(255,255,255,.1)}
+.lcard::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
+.lcard.lv-g::before{background:var(--grn)}.lcard.lv-p::before{background:var(--ylw)}.lcard.lv-c::before{background:var(--orn)}.lcard.lv-u::before{background:var(--red)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.cn{font-weight:600;font-size:1.02rem}
+.ci{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.lv-g .ci{background:var(--grn);box-shadow:0 0 12px var(--grn)}.lv-p .ci{background:var(--ylw);box-shadow:0 0 12px var(--ylw)}
+.lv-c .ci{background:var(--orn);box-shadow:0 0 12px var(--orn)}.lv-u .ci{background:var(--red);box-shadow:0 0 12px var(--red)}
+.cv{font-size:.88rem;color:var(--t2);line-height:1.5;margin-bottom:8px}
+.cm{display:flex;gap:12px;font-size:.76rem;color:var(--t3);flex-wrap:wrap}.cm span{display:flex;align-items:center;gap:4px}
 
-/* Hero card */
-.hero { margin:24px 0; padding:32px; border-radius:20px; text-align:center; position:relative; overflow:hidden; cursor:pointer; transition:transform 0.2s; }
-.hero:hover { transform:scale(1.01); }
-.hero.level-great { background:linear-gradient(135deg,rgba(46,204,113,0.15),rgba(45,212,191,0.08)); border:1px solid rgba(46,204,113,0.3); }
-.hero.level-possible { background:linear-gradient(135deg,rgba(241,196,15,0.12),rgba(241,196,15,0.04)); border:1px solid rgba(241,196,15,0.25); }
-.hero.level-cloudy { background:linear-gradient(135deg,rgba(230,126,34,0.12),rgba(230,126,34,0.04)); border:1px solid rgba(230,126,34,0.25); }
-.hero.level-unlikely { background:linear-gradient(135deg,rgba(231,76,60,0.1),rgba(231,76,60,0.03)); border:1px solid rgba(231,76,60,0.2); }
-.hero-eyebrow { font-size:0.8rem; font-weight:500; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-secondary); margin-bottom:12px; }
-.hero-location { font-family:'Fraunces',serif; font-size:1.6rem; font-weight:500; margin-bottom:8px; }
-.hero-verdict { font-size:1.05rem; font-weight:400; margin-bottom:16px; line-height:1.5; }
-.hero-detail { font-size:0.85rem; color:var(--text-secondary); }
-.hero-detail strong { color:var(--text-primary); font-weight:500; }
+/* Alert */
+.asec{margin:32px 0;background:linear-gradient(135deg,rgba(45,212,191,.08),rgba(167,139,250,.05));border:1px solid rgba(45,212,191,.2);border-radius:16px;padding:24px;text-align:center}
+.atitle{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:500;margin-bottom:6px}
+.adesc{font-size:.88rem;color:var(--t2);margin-bottom:18px;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.5}
+.aform{display:flex;gap:8px;max-width:400px;margin:0 auto}
+.ainput{flex:1;padding:11px 14px;border-radius:10px;border:1px solid var(--brd);background:var(--bg);color:var(--t1);font-family:'Outfit',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s}
+.ainput:focus{border-color:var(--at)}.ainput::placeholder{color:var(--t3)}
+.abtn{padding:11px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--at),var(--ag));color:var(--bg);font-family:'Outfit',sans-serif;font-weight:600;font-size:.88rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+.abtn:hover{transform:scale(1.03);box-shadow:0 0 20px rgba(45,212,191,.3)}
+.aok{display:none;color:var(--ag);font-size:.88rem;margin-top:10px}
+.aerr{display:none;color:var(--red);font-size:.85rem;margin-top:8px}
 
-/* 3-Night Outlook */
-.outlook-strip { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
-.outlook-card { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:16px 14px; text-align:center; transition:all 0.2s; }
-.outlook-card:hover { background:var(--bg-card-hover); }
-.outlook-card.is-tonight { border-color:rgba(255,255,255,0.12); }
-.outlook-day { font-size:0.78rem; font-weight:500; color:var(--text-secondary); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.06em; }
-.outlook-indicator { width:18px; height:18px; border-radius:50%; margin:0 auto 10px; }
-.outlook-indicator.level-great { background:var(--green-glow); box-shadow:0 0 16px var(--green-glow); }
-.outlook-indicator.level-possible { background:var(--yellow-glow); box-shadow:0 0 16px var(--yellow-glow); }
-.outlook-indicator.level-cloudy { background:var(--orange-glow); box-shadow:0 0 16px var(--orange-glow); }
-.outlook-indicator.level-unlikely { background:var(--red-glow); box-shadow:0 0 12px var(--red-glow); }
-.outlook-label { font-size:0.85rem; font-weight:500; color:var(--text-primary); margin-bottom:4px; }
-.outlook-desc { font-size:0.75rem; color:var(--text-muted); line-height:1.4; }
+/* Last night */
+.lnsec{margin:32px 0;background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:22px}
+.lnh{display:flex;align-items:center;gap:10px;margin-bottom:6px}.lnh h3{font-size:.95rem;font-weight:600}
+.lnd{font-size:.85rem;color:var(--t2);line-height:1.5}
 
-/* Location cards grid */
-.locations-grid { display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:24px; }
-@media(min-width:600px) { .locations-grid { grid-template-columns:1fr 1fr; } }
-.location-card { background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:20px; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
-.location-card:hover { background:var(--bg-card-hover); transform:translateY(-2px); border-color:rgba(255,255,255,0.1); }
-.location-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; border-radius:4px 0 0 4px; }
-.location-card.level-great::before { background:var(--green-glow); }
-.location-card.level-possible::before { background:var(--yellow-glow); }
-.location-card.level-cloudy::before { background:var(--orange-glow); }
-.location-card.level-unlikely::before { background:var(--red-glow); }
-.card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-.card-location-name { font-weight:600; font-size:1.05rem; }
-.card-indicator { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
-.level-great .card-indicator { background:var(--green-glow); box-shadow:0 0 12px var(--green-glow); }
-.level-possible .card-indicator { background:var(--yellow-glow); box-shadow:0 0 12px var(--yellow-glow); }
-.level-cloudy .card-indicator { background:var(--orange-glow); box-shadow:0 0 12px var(--orange-glow); }
-.level-unlikely .card-indicator { background:var(--red-glow); box-shadow:0 0 12px var(--red-glow); }
-.card-verdict { font-size:0.92rem; color:var(--text-secondary); line-height:1.5; margin-bottom:10px; }
-.card-meta { display:flex; gap:16px; font-size:0.78rem; color:var(--text-muted); }
-.card-meta span { display:flex; align-items:center; gap:4px; }
+/* Tours */
+.tgrid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:600px){.tgrid{grid-template-columns:1fr 1fr}}
+.tcard{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:16px;display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit;transition:all .2s}
+.tcard:hover{background:var(--card-h);border-color:rgba(255,255,255,.1);transform:translateY(-1px)}
+.ticon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;background:rgba(45,212,191,.1)}
+.tinfo h3{font-size:.88rem;font-weight:600;margin-bottom:2px}.tinfo p{font-size:.78rem;color:var(--t2);line-height:1.4}
+.text-link{font-size:.72rem;color:var(--at);margin-top:2px;display:block}
 
-/* Forecast bars */
-.forecast-section { margin:32px 0; background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:24px; }
-.forecast-title { font-weight:600; font-size:1rem; margin-bottom:4px; }
-.forecast-subtitle { font-size:0.82rem; color:var(--text-secondary); margin-bottom:20px; }
-.forecast-chart { display:flex; align-items:flex-end; gap:3px; height:120px; padding:0 4px; }
-.forecast-bar-group { flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; }
-.forecast-bar { width:100%; max-width:28px; border-radius:4px 4px 0 0; min-height:4px; transition:all 0.3s; }
-.forecast-bar.is-night { opacity:1; }
-.forecast-bar.is-day { opacity:0.25; }
-.forecast-bar.kp-low { background:var(--red-glow); }
-.forecast-bar.kp-mod { background:var(--yellow-glow); }
-.forecast-bar.kp-high { background:var(--green-glow); }
-.forecast-bar.kp-storm { background:var(--aurora-purple); }
-.forecast-time { font-size:0.6rem; color:var(--text-muted); margin-top:6px; text-align:center; white-space:nowrap; }
-.forecast-time.is-tonight { color:var(--text-secondary); font-weight:500; }
-.forecast-legend { display:flex; gap:16px; margin-top:16px; font-size:0.75rem; color:var(--text-muted); flex-wrap:wrap; }
-.legend-item { display:flex; align-items:center; gap:5px; }
-.legend-dot { width:8px; height:8px; border-radius:2px; }
-.forecast-empty { text-align:center; padding:30px; color:var(--text-muted); font-size:0.85rem; }
+/* SEO */
+.seosec{margin:40px 0;padding:24px;background:var(--card);border:1px solid var(--brd);border-radius:16px}
+.seosec h2{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:500;margin-bottom:10px}
+.seosec p{font-size:.88rem;color:var(--t2);line-height:1.7;margin-bottom:10px}.seosec p:last-child{margin-bottom:0}
 
-/* Alert signup */
-.alert-section { margin:32px 0; background:linear-gradient(135deg,rgba(45,212,191,0.08),rgba(167,139,250,0.05)); border:1px solid rgba(45,212,191,0.2); border-radius:16px; padding:28px; text-align:center; }
-.alert-title { font-family:'Fraunces',serif; font-size:1.3rem; font-weight:500; margin-bottom:8px; }
-.alert-desc { font-size:0.9rem; color:var(--text-secondary); margin-bottom:20px; max-width:420px; margin-left:auto; margin-right:auto; line-height:1.5; }
-.alert-form { display:flex; gap:8px; max-width:400px; margin:0 auto; }
-.alert-input { flex:1; padding:12px 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg-deep); color:var(--text-primary); font-family:'Outfit',sans-serif; font-size:0.9rem; outline:none; transition:border-color 0.2s; }
-.alert-input:focus { border-color:var(--aurora-teal); }
-.alert-input::placeholder { color:var(--text-muted); }
-.alert-btn { padding:12px 20px; border-radius:10px; border:none; background:linear-gradient(135deg,var(--aurora-teal),var(--aurora-green)); color:var(--bg-deep); font-family:'Outfit',sans-serif; font-weight:600; font-size:0.9rem; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
-.alert-btn:hover { transform:scale(1.03); box-shadow:0 0 20px rgba(45,212,191,0.3); }
-.alert-success { display:none; color:var(--aurora-green); font-size:0.9rem; margin-top:12px; }
-
-/* Last night section */
-.lastnight-section { margin:32px 0; background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:24px; }
-.lastnight-header { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-.lastnight-header h3 { font-size:1rem; font-weight:600; }
-.lastnight-desc { font-size:0.88rem; color:var(--text-secondary); line-height:1.5; }
-
-/* Tours section */
-.tours-grid { display:grid; grid-template-columns:1fr; gap:12px; }
-@media(min-width:600px) { .tours-grid { grid-template-columns:1fr 1fr; } }
-.tour-card { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:18px; display:flex; gap:14px; align-items:center; text-decoration:none; color:inherit; transition:all 0.2s; }
-.tour-card:hover { background:var(--bg-card-hover); border-color:rgba(255,255,255,0.1); transform:translateY(-1px); }
-.tour-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; background:rgba(45,212,191,0.1); }
-.tour-info h3 { font-size:0.92rem; font-weight:600; margin-bottom:2px; }
-.tour-info p { font-size:0.8rem; color:var(--text-secondary); line-height:1.4; }
-
-/* SEO section */
-.seo-section { margin:40px 0; padding:28px; background:var(--bg-card); border:1px solid var(--border); border-radius:16px; }
-.seo-section h2 { font-family:'Fraunces',serif; font-size:1.3rem; font-weight:500; margin-bottom:12px; }
-.seo-section p { font-size:0.9rem; color:var(--text-secondary); line-height:1.7; margin-bottom:12px; }
-.seo-section p:last-child { margin-bottom:0; }
-
-/* Location detail page */
-.location-detail { display:none; }
-.location-detail.active { display:block; }
-.back-btn { display:inline-flex; align-items:center; gap:6px; color:var(--text-secondary); font-size:0.85rem; cursor:pointer; padding:8px 0; margin-bottom:16px; border:none; background:none; font-family:'Outfit',sans-serif; transition:color 0.2s; }
-.back-btn:hover { color:var(--text-primary); }
-
-.detail-hero { padding:32px; border-radius:20px; margin-bottom:24px; text-align:center; }
-.detail-hero.level-great { background:linear-gradient(135deg,rgba(46,204,113,0.15),rgba(45,212,191,0.08)); border:1px solid rgba(46,204,113,0.3); }
-.detail-hero.level-possible { background:linear-gradient(135deg,rgba(241,196,15,0.12),rgba(241,196,15,0.04)); border:1px solid rgba(241,196,15,0.25); }
-.detail-hero.level-cloudy { background:linear-gradient(135deg,rgba(230,126,34,0.12),rgba(230,126,34,0.04)); border:1px solid rgba(230,126,34,0.25); }
-.detail-hero.level-unlikely { background:linear-gradient(135deg,rgba(231,76,60,0.1),rgba(231,76,60,0.03)); border:1px solid rgba(231,76,60,0.2); }
-.detail-location-name { font-family:'Fraunces',serif; font-size:1.8rem; font-weight:500; margin-bottom:8px; }
-.detail-verdict-large { font-size:1.1rem; margin-bottom:16px; line-height:1.5; }
-.detail-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:20px; }
-.detail-stat { text-align:center; }
-.detail-stat-value { font-size:1.4rem; font-weight:600; margin-bottom:2px; }
-.detail-stat-label { font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; }
-
-.info-card { background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:12px; }
-.info-card h3 { font-size:0.9rem; font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
-.info-card p { font-size:0.85rem; color:var(--text-secondary); line-height:1.6; }
-
-.spot-list { list-style:none; padding:0; }
-.spot-list li { padding:10px 0; border-bottom:1px solid var(--border); font-size:0.88rem; }
-.spot-list li:last-child { border-bottom:none; }
-.spot-name { font-weight:600; color:var(--text-primary); }
-.spot-desc { color:var(--text-secondary); margin-top:2px; line-height:1.4; }
-
-.share-btn { display:inline-flex; align-items:center; gap:6px; padding:10px 18px; border-radius:10px; border:1px solid var(--border); background:var(--bg-card); color:var(--text-secondary); font-family:'Outfit',sans-serif; font-size:0.85rem; cursor:pointer; transition:all 0.2s; margin-top:16px; }
-.share-btn:hover { background:var(--bg-card-hover); color:var(--text-primary); border-color:var(--aurora-teal); }
-
-.detail-nerd { cursor:pointer; }
-.nerd-data { display:none; margin-top:8px; }
-.nerd-data p { margin-top:0; }
-
-/* Other locations strip on detail page */
-.other-locations { display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin:16px 0; }
-.other-loc-chip { flex-shrink:0; padding:8px 16px; border-radius:20px; background:var(--bg-card); border:1px solid var(--border); font-size:0.82rem; color:var(--text-secondary); cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
-.other-loc-chip:hover { background:var(--bg-card-hover); color:var(--text-primary); }
-.chip-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-
-footer { text-align:center; padding:40px 0; font-size:0.78rem; color:var(--text-muted); line-height:1.7; }
-footer a { color:var(--text-secondary); text-decoration:none; }
-footer a:hover { color:var(--text-primary); }
+/* Detail page */
+.det{display:none}.det.active{display:block}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--t2);font-size:.85rem;cursor:pointer;padding:8px 0;margin-bottom:12px;border:none;background:none;font-family:'Outfit',sans-serif;transition:color .2s}.back:hover{color:var(--t1)}
+.dhero{padding:28px;border-radius:20px;margin-bottom:20px;text-align:center}
+.dname{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:500;margin-bottom:6px}
+.dverdict{font-size:1.05rem;margin-bottom:14px;line-height:1.5}
+.dstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:18px}
+.dstat{text-align:center}.dsv{font-size:1.3rem;font-weight:600;margin-bottom:2px}.dsl{font-size:.72rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.icard{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:18px;margin-bottom:12px}
+.icard h3{font-size:.88rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.icard p{font-size:.83rem;color:var(--t2);line-height:1.6}
+.slist{list-style:none;padding:0}.slist li{padding:9px 0;border-bottom:1px solid var(--brd);font-size:.85rem}
+.slist li:last-child{border-bottom:none}.sn{font-weight:600;color:var(--t1)}.sd{color:var(--t2);margin-top:2px;line-height:1.4}
+.sbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;border:1px solid var(--brd);background:var(--card);color:var(--t2);font-family:'Outfit',sans-serif;font-size:.83rem;cursor:pointer;transition:all .2s;margin-top:14px}
+.sbtn:hover{background:var(--card-h);color:var(--t1);border-color:var(--at)}
+.olocs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin:12px 0}
+.ochip{flex-shrink:0;padding:7px 14px;border-radius:20px;background:var(--card);border:1px solid var(--brd);font-size:.8rem;color:var(--t2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.ochip:hover{background:var(--card-h);color:var(--t1)}
+.cdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.nerd{cursor:pointer}.ndata{display:none;margin-top:8px}
+footer{text-align:center;padding:40px 0;font-size:.76rem;color:var(--t3);line-height:1.7}footer a{color:var(--t2);text-decoration:none}footer a:hover{color:var(--t1)}
 </style>
 </head>
 <body>
-<div class="aurora-bg">
-  <div class="aurora-band"></div>
-  <div class="aurora-band"></div>
-  <div class="aurora-band"></div>
-  <div class="stars" id="stars"></div>
+<div class="abg"><div class="ab"></div><div class="ab"></div><div class="ab"></div><div class="stars" id="stars"></div></div>
+<div class="c">
+<header>
+  <div class="logo" onclick="nav('')">Alaska Glow</div>
+  <div class="tagline">Will you see the northern lights tonight?</div>
+</header>
+
+<div id="nowBanner" class="now-banner" style="display:none;"></div>
+
+<div id="loading" class="loading"><div class="spinner"></div><div style="color:var(--t2);font-size:.9rem;">Checking aurora conditions...</div></div>
+
+<div id="dash" style="display:none;">
+  <div class="upd" id="upd"></div>
+  <div id="heroCard" class="hero lv-p">
+    <div class="hero-ey">✦ Best spot tonight</div>
+    <div class="hero-loc" id="heroLoc">—</div>
+    <div class="hero-v" id="heroV"></div>
+    <div class="hero-d" id="heroD"></div>
+  </div>
+
+  <div class="sl">3-Night Outlook</div>
+  <div class="olstrip" id="olstrip"></div>
+
+  <div class="sl">All locations tonight</div>
+  <div class="lgrid" id="lgrid"></div>
+
+  <div id="lnSec" class="lnsec" style="display:none;">
+    <div class="lnh"><span style="font-size:1.1rem;">🌌</span><h3 id="lnTitle"></h3></div>
+    <div class="lnd" id="lnDesc"></div>
+  </div>
+
+  <div class="asec">
+    <div class="atitle">Get notified when it's go time</div>
+    <div class="adesc">We'll email you when conditions look great. No spam, just glow.</div>
+    <div class="aform" id="aform"><input type="email" class="ainput" placeholder="your@email.com" id="aEmail"><button class="abtn" onclick="doSignup('aEmail','aform','aok','aerr','all')">Notify me</button></div>
+    <div class="aok" id="aok">You're on the list! We'll let you know when the sky lights up.</div>
+    <div class="aerr" id="aerr"></div>
+  </div>
+
+  <div class="sl">Aurora experiences in Alaska</div>
+  <div class="tgrid">
+    <a href="https://chenahotsprings.com" target="_blank" rel="noopener" class="tcard">
+      <div class="ticon">♨️</div>
+      <div class="tinfo"><h3>Chena Hot Springs Resort</h3><p>Soak under the aurora 60 miles outside Fairbanks. Alaska's top-rated northern lights experience.</p><span class="text-link">chenahotsprings.com ↗</span></div>
+    </a>
+    <a href="https://www.roamalaska.com" target="_blank" rel="noopener" class="tcard">
+      <div class="ticon">📸</div>
+      <div class="tinfo"><h3>Roam Alaska — Aurora Photo Tours</h3><p>Guided aurora photography tours from Fairbanks with warm transport and expert tips.</p><span class="text-link">roamalaska.com ↗</span></div>
+    </a>
+    <a href="https://www.alaskaaurora.com" target="_blank" rel="noopener" class="tcard">
+      <div class="ticon">🏔️</div>
+      <div class="tinfo"><h3>Alaska Aurora Adventures</h3><p>Fairbanks-based aurora viewing tours, cabin rentals, and photography workshops.</p><span class="text-link">alaskaaurora.com ↗</span></div>
+    </a>
+    <a href="https://www.borealisbasecamp.com" target="_blank" rel="noopener" class="tcard">
+      <div class="ticon">🏕️</div>
+      <div class="tinfo"><h3>Borealis Basecamp</h3><p>Glass-ceiling igloos near Fairbanks — sleep under the aurora. Books out months ahead.</p><span class="text-link">borealisbasecamp.com ↗</span></div>
+    </a>
+  </div>
+
+  <div class="seosec">
+    <h2>Northern Lights in Alaska — What You Need to Know</h2>
+    <p>Alaska is one of the best places on Earth to see the aurora borealis. The northern lights happen when charged particles from the sun hit Earth's atmosphere, creating curtains of green, purple, and pink light that dance across the sky.</p>
+    <p>Fairbanks sits directly under the "auroral oval" and sees aurora on most clear nights from September through April. Anchorage, Palmer, and the Mat-Su Valley need stronger activity but still get spectacular shows several times per month. Denali and Talkeetna are sweet spots between the two. Juneau needs a genuine solar storm, but when it happens, aurora over the ocean is unforgettable.</p>
+    <p>Four things matter: strong solar activity (we track this), clear skies (we check the weather), darkness (only visible at night), and moon phase (a bright moon washes out faint aurora). Alaska Glow combines all four into one simple answer for each location.</p>
+  </div>
 </div>
 
-<div class="container">
-  <header>
-    <div class="logo" onclick="navigateTo('')">Alaska Glow</div>
-    <div class="tagline">Will you see the northern lights tonight?</div>
-  </header>
+<div id="det" class="det"></div>
 
-  <div id="loading" class="loading-state">
-    <div class="loading-spinner"></div>
-    <div class="loading-text" style="color:var(--text-secondary);font-size:0.9rem;">Checking aurora conditions...</div>
-  </div>
-
-  <!-- ==================== DASHBOARD ==================== -->
-  <div id="dashboard" style="display:none;">
-    <div class="last-updated" id="lastUpdated"></div>
-
-    <div id="heroCard" class="hero level-possible">
-      <div class="hero-eyebrow">✦ Best spot tonight</div>
-      <div class="hero-location" id="heroLocation">—</div>
-      <div class="hero-verdict" id="heroVerdict"></div>
-      <div class="hero-detail" id="heroDetail"></div>
-    </div>
-
-    <div class="section-label">3-Night Outlook</div>
-    <div class="outlook-strip" id="outlookStrip"></div>
-
-    <div class="section-label">All locations tonight</div>
-    <div class="locations-grid" id="locationsGrid"></div>
-
-    <!-- Was last night good? -->
-    <div class="lastnight-section" id="lastnightSection" style="display:none;">
-      <div class="lastnight-header">
-        <span style="font-size:1.2rem;">🌌</span>
-        <h3 id="lastnightTitle">Was last night good?</h3>
-      </div>
-      <div class="lastnight-desc" id="lastnightDesc"></div>
-    </div>
-
-    <!-- 3-Day Activity Forecast -->
-    <div class="forecast-section">
-      <div class="forecast-title">3-Day Activity Forecast</div>
-      <div class="forecast-subtitle">Taller bars = stronger aurora activity. Bright bars = nighttime (when you can see them).</div>
-      <div class="forecast-chart" id="forecastChart"></div>
-      <div class="forecast-legend" id="forecastLegend" style="display:none;">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--red-glow)"></div> Quiet</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--yellow-glow)"></div> Moderate</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--green-glow)"></div> Active</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--aurora-purple)"></div> Storm</div>
-        <div class="legend-item"><span style="opacity:0.3">▐</span> Daytime</div>
-      </div>
-    </div>
-
-    <!-- Alert signup -->
-    <div class="alert-section">
-      <div class="alert-title">Get notified when it's go time</div>
-      <div class="alert-desc">We'll email you when aurora conditions look great for your location. No spam, just glow.</div>
-      <div class="alert-form" id="alertForm">
-        <input type="email" class="alert-input" placeholder="your@email.com" id="alertEmail">
-        <button class="alert-btn" onclick="handleAlertSignup()">Notify me</button>
-      </div>
-      <div class="alert-success" id="alertSuccess">You're on the list! We'll let you know when the sky lights up.</div>
-    </div>
-
-    <!-- Tours -->
-    <div class="section-label">Popular aurora experiences</div>
-    <div class="tours-grid">
-      <a href="#" class="tour-card" onclick="return false;">
-        <div class="tour-icon">♨️</div>
-        <div class="tour-info"><h3>Chena Hot Springs</h3><p>Soak under the aurora outside Fairbanks. Alaska's top-rated northern lights experience.</p></div>
-      </a>
-      <a href="#" class="tour-card" onclick="return false;">
-        <div class="tour-icon">📸</div>
-        <div class="tour-info"><h3>Aurora Photography Tours</h3><p>Guided photo tours with warm transport and expert tips. Fairbanks & Anchorage departures.</p></div>
-      </a>
-      <a href="#" class="tour-card" onclick="return false;">
-        <div class="tour-icon">🏔️</div>
-        <div class="tour-info"><h3>Denali Aurora Lodges</h3><p>Dark sky lodges with aurora wake-up calls. Peak season September through April.</p></div>
-      </a>
-      <a href="#" class="tour-card" onclick="return false;">
-        <div class="tour-icon">🛷</div>
-        <div class="tour-info"><h3>Dog Sled + Aurora Combo</h3><p>Daytime mushing, evening aurora viewing. The ultimate Alaska bucket list.</p></div>
-      </a>
-    </div>
-
-    <!-- SEO content -->
-    <div class="seo-section">
-      <h2>Northern Lights in Alaska — What You Need to Know</h2>
-      <p>Alaska is one of the best places on Earth to see the aurora borealis, and you don't need a science degree to figure out when to look up. The northern lights happen when charged particles from the sun hit Earth's atmosphere, creating curtains of green, purple, and pink light that dance across the sky.</p>
-      <p>How far south the aurora reaches depends on how strong the solar activity is. Fairbanks sits directly under the "auroral oval" and sees aurora on most clear nights from September through April. Anchorage, Palmer, and the Mat-Su Valley need stronger activity but still get spectacular shows several times per month during peak season. Denali and Talkeetna are sweet spots between the two. Juneau and Southeast Alaska need a genuine solar storm, but when it happens, aurora over the ocean is unforgettable.</p>
-      <p>Three things matter: strong solar activity (we track this for you), clear skies (we check the forecast), and darkness (aurora is only visible at night). Alaska Glow combines all three into one simple answer for each location.</p>
-    </div>
-  </div>
-
-  <!-- ==================== LOCATION DETAIL ==================== -->
-  <div id="locationDetail" class="location-detail"></div>
-
-  <footer>
-    <div>Data from <a href="https://www.swpc.noaa.gov/" target="_blank" rel="noopener">NOAA Space Weather Prediction Center</a> & <a href="https://www.weather.gov/" target="_blank" rel="noopener">National Weather Service</a></div>
-    <div style="margin-top:6px;">© 2026 Alaska Glow · alaskaglow.com</div>
-  </footer>
+<footer>
+  <div>Data from <a href="https://www.swpc.noaa.gov/" target="_blank" rel="noopener">NOAA Space Weather Prediction Center</a> & <a href="https://www.weather.gov/" target="_blank" rel="noopener">National Weather Service</a></div>
+  <div style="margin-top:6px;">© 2026 Alaska Glow · alaskaglow.com</div>
+</footer>
 </div>
 
 <script>
-// =====================================================================
-// LOCATIONS DATABASE
-// =====================================================================
-const LOCATIONS = [
-  {
-    id: 'fairbanks', name: 'Fairbanks', lat: 64.84, lon: -147.72,
-    kpVisible: 1, kpGood: 3, nwsOffice: 'AFG',
-    tagline: 'Under the auroral oval — your best bet in Alaska',
-    seoTitle: 'Northern Lights in Fairbanks',
-    seoDesc: 'Fairbanks sits directly under the auroral oval, making it the best place in Alaska — and one of the best on Earth — to see the northern lights. Aurora is visible here on most clear nights from September through April, even at low activity levels. The city has built an entire tourism industry around aurora viewing, with lodges, hot springs, and guided photo tours all designed around the lights.',
-    spots: [
-      { name: 'Chena Hot Springs', desc: 'Iconic. Soak in hot springs while watching aurora overhead. 60 miles northeast of Fairbanks in a natural dark sky area.' },
-      { name: 'Cleary Summit', desc: 'Popular local spot on the Steese Highway. High elevation with wide open northern views. Bring a thermos — it gets cold.' },
-      { name: 'Murphy Dome', desc: 'Old military radar site northwest of town. 360-degree views from the top. Rough road in winter but worth it.' },
-      { name: 'Ester Dome', desc: 'Just outside Fairbanks with excellent dark skies. Easy access and popular with photographers.' },
-      { name: 'Chena Lakes Recreation Area', desc: 'Close to town with good horizons. Less driving than the summits if you want a quick look.' }
-    ]
-  },
-  {
-    id: 'denali', name: 'Denali Area', lat: 63.73, lon: -148.91,
-    kpVisible: 2, kpGood: 3, nwsOffice: 'AFG',
-    tagline: 'Dark skies and North America\'s tallest peak — incredible backdrop',
-    seoTitle: 'Northern Lights at Denali',
-    seoDesc: 'The Denali area offers some of Alaska\'s most dramatic aurora viewing, with the northern lights dancing above North America\'s tallest peak. The combination of high latitude, minimal light pollution, and stunning mountain scenery makes this a photographer\'s dream. Most Denali lodges outside the park are positioned specifically for aurora viewing with north-facing windows and wake-up call services.',
-    spots: [
-      { name: 'Denali State Park (Mile 135 Viewpoint)', desc: 'Incredible views of Denali itself with aurora overhead. The overlooks along the Parks Highway have wide open sky.' },
-      { name: 'Carlo Creek Area', desc: 'Small community south of Denali park entrance. Very dark, minimal light pollution, and several lodges cater to aurora chasers.' },
-      { name: 'Cantwell', desc: 'Tiny community at the junction of the Parks and Denali highways. Extremely dark skies and easy highway access.' },
-      { name: 'Wonder Lake (Summer Only)', desc: 'Deep inside the park — no light pollution at all. Only accessible late August/September when the park road is open and nights are dark.' }
-    ]
-  },
-  {
-    id: 'talkeetna', name: 'Talkeetna', lat: 62.32, lon: -150.11,
-    kpVisible: 2, kpGood: 4, nwsOffice: 'AFC',
-    tagline: 'Quirky small town, big dark skies, and Denali views',
-    seoTitle: 'Northern Lights in Talkeetna',
-    seoDesc: 'Talkeetna is a charming small town about two hours north of Anchorage that has become a popular aurora viewing destination. It\'s far enough from Anchorage to escape most light pollution, and on clear nights you can see aurora with Denali as a backdrop. The town has a funky, independent vibe with good restaurants and lodges that make it a more interesting base than just parking on the highway.',
-    spots: [
-      { name: 'Talkeetna River Bars', desc: 'Walk down to the riverbank for wide open northern views. The gravel bars along the Susitna and Talkeetna rivers are natural dark sky viewing areas.' },
-      { name: 'Chase Trail Area', desc: 'South of town with great Denali views. Very few lights and a classic Alaska setting.' },
-      { name: 'Petersville Road', desc: 'Heads west from Trapper Creek into the mountains. Gets very dark very fast. Popular with locals who want to escape any ambient light.' }
-    ]
-  },
-  {
-    id: 'palmer-wasilla', name: 'Palmer–Wasilla', lat: 61.60, lon: -149.11,
-    kpVisible: 3, kpGood: 5, nwsOffice: 'AFC',
-    tagline: 'Mat-Su Valley — great viewing away from Anchorage light pollution',
-    seoTitle: 'Northern Lights in Palmer & Wasilla',
-    seoDesc: 'The Mat-Su Valley towns of Palmer and Wasilla offer a sweet spot for aurora viewing: close enough to Anchorage for easy access but far enough north with less light pollution. You need moderate to strong solar activity (Kp 3+) to see aurora here, but when it happens, the valley\'s wide open agricultural landscapes give you huge sky views that Anchorage can\'t match.',
-    spots: [
-      { name: 'Hatcher Pass', desc: 'Drive up the road toward Independence Mine for stunning alpine aurora views. High elevation + zero light pollution. Check road conditions — upper road closes in winter.' },
-      { name: 'Knik River Road', desc: 'Head east from Palmer toward the Knik Glacier. Gets dark quickly once you leave town. Wide river valley views to the north.' },
-      { name: 'Bodenburg Butte Trailhead', desc: 'Quick drive from Palmer with good northern horizon. The butte blocks some southern light pollution from Wasilla.' },
-      { name: 'Point Mackenzie Road', desc: 'West of Wasilla across the water from Anchorage. Very dark and easy access.' }
-    ]
-  },
-  {
-    id: 'anchorage', name: 'Anchorage', lat: 61.22, lon: -149.90,
-    kpVisible: 3, kpGood: 5, nwsOffice: 'AFC',
-    tagline: 'City lights compete, but strong storms put on a show',
-    seoTitle: 'Northern Lights in Anchorage',
-    seoDesc: 'Yes, you can see the northern lights from Anchorage — but you need to know where to look and when. The city\'s 300,000 residents create significant light pollution, so aurora needs to be moderately strong (Kp 3+) to be visible from town. The trick is getting to the edges of the city where you have dark northern horizons. When a strong storm hits (Kp 5+), aurora can fill the entire sky and you\'ll see it from downtown.',
-    spots: [
-      { name: 'Glen Alps / Flattop Trailhead', desc: 'Above the city in the Chugach Mountains. Wide open views to the north over Anchorage. Popular and easy to reach.' },
-      { name: 'Earthquake Park', desc: 'On the west side of Anchorage overlooking the inlet. Good northern horizon and easy access. Still some city glow but workable during strong events.' },
-      { name: 'Kincaid Park', desc: 'Southwest corner of Anchorage on the coast. Dark to the north and west over the inlet. Trails through the woods to open viewpoints.' },
-      { name: 'Arctic Valley Road', desc: 'Drive up toward Arctic Valley ski area above Eagle River. Gets above much of the city light. Excellent dark sky spot.' },
-      { name: 'Mirror Lake', desc: 'In Eagle River, north of Anchorage proper. Reflections of aurora in calm water if you time it right.' }
-    ]
-  },
-  {
-    id: 'kenai', name: 'Kenai Peninsula', lat: 60.55, lon: -151.26,
-    kpVisible: 4, kpGood: 5, nwsOffice: 'AFC',
-    tagline: 'Needs stronger storms but the coastal backdrop is worth the wait',
-    seoTitle: 'Northern Lights on the Kenai Peninsula',
-    seoDesc: 'The Kenai Peninsula is farther south than interior Alaska, so you need stronger solar activity to see aurora here — generally Kp 4 or higher. But when it happens, the combination of mountains, coastline, and dark skies creates some of the most photogenic aurora scenes in the state. If you\'re visiting Homer, Seward, or Kenai/Soldotna for fishing or scenery and a storm rolls through, you\'re in for a treat.',
-    spots: [
-      { name: 'Homer Spit', desc: 'Walk out on the spit for 360-degree views over Kachemak Bay. When aurora is strong enough to reach this far south, the reflections on the water are stunning.' },
-      { name: 'Turnagain Pass', desc: 'Along the Seward Highway between Anchorage and the peninsula. High elevation, very dark, and surprisingly good aurora viewing.' },
-      { name: 'Captain Cook State Recreation Area', desc: 'North of Kenai on the coast. Dark skies and north-facing beaches make this ideal when Kp is high enough.' },
-      { name: 'Seward Waterfront', desc: 'Less light pollution than you\'d expect for a port town. Aurora over Resurrection Bay is spectacular during strong events.' }
-    ]
-  },
-  {
-    id: 'juneau', name: 'Juneau', lat: 58.30, lon: -134.42,
-    kpVisible: 5, kpGood: 6, nwsOffice: 'AJK',
-    tagline: 'Southeast Alaska — rare but unforgettable when it happens',
-    seoTitle: 'Northern Lights in Juneau',
-    seoDesc: 'Juneau is the hardest major Alaska city for aurora viewing — you need a genuine solar storm (Kp 5+) to see northern lights this far south and east. The frequent cloud cover in Southeast Alaska makes it even trickier. But when a strong geomagnetic storm coincides with clear skies, aurora over the Gastineau Channel and surrounding mountains is absolutely spectacular. It happens a few times per season — you just need luck.',
-    spots: [
-      { name: 'Mendenhall Glacier Visitor Center', desc: 'Open area with northern views toward the glacier. When aurora is visible in Juneau, this is where locals go. Check if the parking area is accessible after hours.' },
-      { name: 'Douglas Island', desc: 'Cross the bridge for slightly less city glow. North-facing beaches on Douglas have good horizon views.' },
-      { name: 'Out the Road (North Douglas Highway)', desc: 'Drive north along the coast. Gets dark quickly and you have open water views to the north.' },
-      { name: 'Eaglecrest Ski Area Road', desc: 'Head up Fish Creek Road on Douglas Island for elevation above any marine fog or low clouds.' }
-    ]
-  }
+const L=[
+{id:'fairbanks',name:'Fairbanks',lat:64.84,lon:-147.72,kpV:1,kpG:3,drive:'5.5 hrs from Anchorage',
+tag:'Under the auroral oval — best odds in Alaska',
+seo:'Fairbanks sits directly under the auroral oval, making it the best place in Alaska to see the northern lights. Aurora is visible here on most clear nights from September through April, even at low activity levels. The city has an entire tourism industry built around aurora — lodges, hot springs, and guided photo tours all designed around the lights.',
+spots:[
+{n:'Chena Hot Springs',d:'Iconic. Soak in hot springs watching aurora overhead. 60 mi northeast in a natural dark sky area.'},
+{n:'Cleary Summit',d:'Popular local spot on the Steese Hwy. High elevation, wide northern views. Bring a thermos.'},
+{n:'Murphy Dome',d:'Old military radar site NW of town. 360° views. Rough winter road but worth it.'},
+{n:'Ester Dome',d:'Just outside Fairbanks, excellent dark skies. Easy access and popular with photographers.'},
+{n:'Chena Lakes Recreation Area',d:'Close to town with good horizons. Less driving than the summits.'}
+]},
+{id:'denali',name:'Denali Area',lat:63.73,lon:-148.91,kpV:2,kpG:3,drive:'4.5 hrs from Anchorage',
+tag:'Dark skies beneath North America\'s tallest peak',
+seo:'The Denali area offers dramatic aurora viewing with the northern lights dancing above the tallest peak in North America. High latitude, minimal light pollution, and stunning mountain scenery make this a photographer\'s dream. Most lodges outside the park are positioned for aurora viewing with north-facing windows and wake-up call services.',
+spots:[
+{n:'Denali State Park (Mile 135)',d:'Incredible views of the mountain with aurora overhead. Wide open sky at the overlooks.'},
+{n:'Carlo Creek Area',d:'South of park entrance. Very dark, minimal light pollution. Several lodges cater to aurora chasers.'},
+{n:'Cantwell',d:'Tiny community at the Parks/Denali Hwy junction. Extremely dark skies and easy access.'},
+{n:'Wonder Lake (Late Aug–Sep only)',d:'Deep inside the park — zero light pollution. Only accessible when road is open and nights are dark.'}
+]},
+{id:'talkeetna',name:'Talkeetna',lat:62.32,lon:-150.11,kpV:2,kpG:4,drive:'2.5 hrs from Anchorage',
+tag:'Quirky small town, big dark skies, Denali views',
+seo:'Talkeetna is a charming small town about 2.5 hours north of Anchorage that has become a popular aurora destination. Far enough to escape Anchorage light pollution, on clear nights you can see aurora with Denali as a backdrop. Great restaurants and lodges make it a more interesting base than the highway.',
+spots:[
+{n:'Talkeetna River Bars',d:'Walk to the riverbank for wide northern views. Gravel bars along the Susitna are natural dark sky areas.'},
+{n:'Chase Trail Area',d:'South of town with great Denali views. Very few lights and classic Alaska setting.'},
+{n:'Petersville Road',d:'Heads west from Trapper Creek into the mountains. Gets dark fast. Popular with locals.'}
+]},
+{id:'palmer-wasilla',name:'Palmer–Wasilla',lat:61.60,lon:-149.11,kpV:3,kpG:5,drive:'45 min from Anchorage',
+tag:'Mat-Su Valley — great viewing with less light pollution',
+seo:'The Mat-Su Valley towns of Palmer and Wasilla are a sweet spot: close to Anchorage but far enough with less light pollution. Moderate to strong solar activity (Kp 3+) makes aurora visible, and the valley\'s wide agricultural landscapes give huge sky views Anchorage can\'t match.',
+spots:[
+{n:'Hatcher Pass',d:'Drive toward Independence Mine for stunning alpine aurora. Zero light pollution. Check road status — upper road closes in winter.'},
+{n:'Knik River Road',d:'East from Palmer toward the glacier. Gets dark quickly. Wide river valley views north.'},
+{n:'Bodenburg Butte Trailhead',d:'Quick drive from Palmer, good northern horizon. The butte blocks southern light pollution.'},
+{n:'Point Mackenzie Road',d:'West of Wasilla. Very dark and easy access.'}
+]},
+{id:'anchorage',name:'Anchorage',lat:61.22,lon:-149.90,kpV:3,kpG:5,drive:'—',
+tag:'City lights compete, but strong storms light up the sky',
+seo:'Yes, you can see the northern lights from Anchorage — but you need to know where and when. The city\'s 300,000 residents create light pollution, so aurora needs Kp 3+ to be visible. The trick is getting to the edges of the city with dark northern horizons. During strong storms (Kp 5+), aurora fills the entire sky and you\'ll see it from downtown.',
+spots:[
+{n:'Glen Alps / Flattop Trailhead',d:'Above the city in the Chugach Mountains. Wide northern views. Popular and easy to reach.'},
+{n:'Kincaid Park',d:'SW corner of Anchorage on the coast. Dark north and west over the inlet. Trails to open viewpoints.'},
+{n:'Arctic Valley Road',d:'Up toward Arctic Valley ski area above Eagle River. Above the city glow. Excellent dark sky.'},
+{n:'Earthquake Park',d:'West side overlooking the inlet. Good northern horizon, easy access. Some city glow but workable.'},
+{n:'Mirror Lake (Eagle River)',d:'North of Anchorage. Aurora reflections on calm water if you time it right.'}
+]},
+{id:'kenai',name:'Kenai Peninsula',lat:60.55,lon:-151.26,kpV:4,kpG:5,drive:'2.5 hrs from Anchorage',
+tag:'Needs stronger storms but the coastal scenery is worth the wait',
+seo:'The Kenai Peninsula needs stronger solar activity (Kp 4+) to see aurora. But when it happens, the combination of mountains, coastline, and dark skies creates stunning scenes. If you\'re in Homer, Seward, or Kenai/Soldotna and a storm hits, you\'re in for a treat.',
+spots:[
+{n:'Homer Spit',d:'Walk out for 360° views over Kachemak Bay. Aurora reflections on the water are stunning during strong events.'},
+{n:'Turnagain Pass',d:'Along the Seward Highway. High elevation, very dark, surprisingly good viewing.'},
+{n:'Captain Cook State Rec Area',d:'North of Kenai on the coast. Dark skies and north-facing beaches.'},
+{n:'Seward Waterfront',d:'Less light pollution than expected. Aurora over Resurrection Bay is spectacular.'}
+]},
+{id:'juneau',name:'Juneau',lat:58.30,lon:-134.42,kpV:5,kpG:6,drive:'Fly or ferry only',
+tag:'Southeast Alaska — rare but unforgettable when it happens',
+seo:'Juneau is the hardest major Alaska city for aurora viewing — you need a solar storm (Kp 5+) and the frequent cloud cover makes it trickier. But when a strong storm coincides with clear skies, aurora over the Gastineau Channel is absolutely spectacular. Happens a few times per season — you need luck.',
+spots:[
+{n:'Mendenhall Glacier Visitor Center',d:'Open area with northern views toward the glacier. Where locals go. Check if parking is accessible after hours.'},
+{n:'Douglas Island beaches',d:'Cross the bridge for less city glow. North-facing beaches have good horizon views.'},
+{n:'North Douglas Highway',d:'Drive north along the coast. Dark quickly, open water views north.'},
+{n:'Eaglecrest Ski Area Road',d:'Up Fish Creek Road on Douglas Island. Elevation above marine fog and low clouds.'}
+]}
 ];
 
-let allForecasts = [];
-let bestSpotId = 'fairbanks';
-let currentKp = 0;
-let currentBz = 0;
-let globalData = null;
+let AF=[],bestId='fairbanks',cKp=0,cBz=0,GD=null,cloudData={};
 
-// =====================================================================
-// DATA FETCHING
-// =====================================================================
-async function fetchJSON(url) {
-  try {
-    const controller = new AbortController();
-    setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(url, { signal: controller.signal });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-  } catch(e) {
-    console.warn(`Fetch failed: ${url}`, e.message);
-    return null;
-  }
+async function fj(u){try{const c=new AbortController();setTimeout(()=>c.abort(),8000);const r=await fetch(u,{signal:c.signal});if(!r.ok)throw 0;return r.json()}catch(e){return null}}
+
+// NWS cloud cover fetch
+async function fetchClouds(loc){
+  try{
+    const pts=await fj(`https://api.weather.gov/points/${loc.lat},${loc.lon}`);
+    if(!pts||!pts.properties||!pts.properties.forecastHourly)return null;
+    const fc=await fj(pts.properties.forecastHourly);
+    if(!fc||!fc.properties||!fc.properties.periods)return null;
+    // Get tonight's cloud cover (6pm to 6am periods)
+    const now=new Date();
+    const periods=fc.properties.periods;
+    let tonightClouds=[];
+    for(const p of periods){
+      const t=new Date(p.startTime);
+      const h=t.getHours();
+      // Tonight = between now and 12 hours from now
+      if(t>now&&t<new Date(now.getTime()+14*3600000)){
+        if(p.isDaytime===false||h>=18||h<=6){
+          tonightClouds.push(p.probabilityOfPrecipitation?.value||0);
+          // Use shortForecast for cloud description
+          if(!cloudData[loc.id]){
+            cloudData[loc.id]={desc:p.shortForecast,cover:estimateCloudPct(p.shortForecast)};
+          }
+        }
+      }
+    }
+    // If we got evening periods, calculate average cloud cover
+    if(tonightClouds.length===0&&periods.length>0){
+      // Fallback: use next nighttime period's description
+      for(const p of periods){
+        if(p.isDaytime===false){
+          cloudData[loc.id]={desc:p.shortForecast,cover:estimateCloudPct(p.shortForecast)};
+          break;
+        }
+      }
+    }
+  }catch(e){console.warn('Cloud fetch failed for',loc.name);}
 }
 
-async function loadData() {
-  const [kpForecast, kpCurrent, bzData] = await Promise.all([
-    fetchJSON('https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json'),
-    fetchJSON('https://services.swpc.noaa.gov/json/planetary_k_index_1m.json'),
-    fetchJSON('https://services.swpc.noaa.gov/products/solar-wind/mag-2-hour.json')
+function estimateCloudPct(desc){
+  if(!desc)return 50;
+  const d=desc.toLowerCase();
+  if(d.includes('clear')||d.includes('sunny'))return 5;
+  if(d.includes('mostly clear')||d.includes('mostly sunny'))return 15;
+  if(d.includes('partly cloudy')||d.includes('partly sunny'))return 40;
+  if(d.includes('mostly cloudy'))return 70;
+  if(d.includes('overcast')||d.includes('cloudy'))return 90;
+  if(d.includes('fog'))return 95;
+  if(d.includes('snow')||d.includes('rain'))return 90;
+  return 50;
+}
+
+async function loadData(){
+  const [kpF,kpC,bzD]=await Promise.all([
+    fj('https://services.swpc.noaa.gov/products/noaa-planetary-k-index-forecast.json'),
+    fj('https://services.swpc.noaa.gov/json/planetary_k_index_1m.json'),
+    fj('https://services.swpc.noaa.gov/products/solar-wind/mag-2-hour.json')
   ]);
+  if(kpC&&kpC.length>0){const l=kpC[kpC.length-1];cKp=l.estimated_kp||l.kp_index||0;}
+  if(bzD&&bzD.length>1){cBz=parseFloat(bzD[bzD.length-1][3])||0;}
 
-  if (kpCurrent && kpCurrent.length > 0) {
-    const latest = kpCurrent[kpCurrent.length - 1];
-    currentKp = latest.estimated_kp || latest.kp_index || 0;
+  let fe=[];
+  if(kpF&&kpF.length>1){for(let i=1;i<kpF.length;i++){const r=kpF[i],k=parseFloat(r[1]);if(!isNaN(k))fe.push({time:new Date(r[0]+' UTC'),kp:k,type:r[2]});}}
+
+  const now=new Date(),ao=akOff(now),an=new Date(now.getTime()+ao*3600000);
+  const tn=darkWin(an,64.84,-147.72);
+  let tMax=cKp;
+  for(const e of fe){const ea=new Date(e.time.getTime()+ao*3600000);if(ea>=tn.start&&ea<=tn.end&&e.kp>tMax)tMax=e.kp;}
+  if(tMax===0)tMax=cKp;
+
+  const nMax=[tMax];
+  for(let d=1;d<=2;d++){
+    const fa=new Date(an);fa.setDate(fa.getDate()+d);fa.setHours(14,0,0,0);
+    const fn=darkWin(fa,64.84,-147.72);let mx=0;
+    for(const e of fe){const ea=new Date(e.time.getTime()+ao*3600000);if(ea>=fn.start&&ea<=fn.end&&e.kp>mx)mx=e.kp;}
+    nMax.push(mx);
   }
 
-  if (bzData && bzData.length > 1) {
-    const latest = bzData[bzData.length - 1];
-    currentBz = parseFloat(latest[3]) || 0;
-  }
+  // Last night
+  const ya=new Date(an);ya.setDate(ya.getDate()-1);ya.setHours(14,0,0,0);
+  const ln=darkWin(ya,64.84,-147.72);let lnMax=0;
+  for(const e of fe){const ea=new Date(e.time.getTime()+ao*3600000);if(ea>=ln.start&&ea<=ln.end&&e.kp>lnMax)lnMax=e.kp;}
 
-  let forecastEntries = [];
-  if (kpForecast && kpForecast.length > 1) {
-    for (let i = 1; i < kpForecast.length; i++) {
-      const row = kpForecast[i];
-      const kpVal = parseFloat(row[1]);
-      if (!isNaN(kpVal)) {
-        forecastEntries.push({
-          time: new Date(row[0] + ' UTC'),
-          kp: kpVal,
-          type: row[2]
-        });
-      }
-    }
-  }
+  // Fetch cloud cover in parallel (non-blocking)
+  await Promise.allSettled(L.map(loc=>fetchClouds(loc)));
 
-  const now = new Date();
-  const akOffset = getAKOffset(now);
-  const akNow = new Date(now.getTime() + akOffset * 3600000);
-  const tonight = getTonightWindow(akNow, 64.84, -147.72);
+  // Moon phase
+  const moonIllum=SunCalc.getMoonIllumination(now);
+  const moonPct=Math.round(moonIllum.fraction*100);
 
-  let tonightMaxKp = currentKp;
-  for (const entry of forecastEntries) {
-    const entryAK = new Date(entry.time.getTime() + akOffset * 3600000);
-    if (entryAK >= tonight.start && entryAK <= tonight.end) {
-      if (entry.kp > tonightMaxKp) tonightMaxKp = entry.kp;
-    }
-  }
-  if (tonightMaxKp === 0) tonightMaxKp = currentKp;
-
-  // Multi-night Kp
-  const nightMaxKps = [tonightMaxKp];
-  for (let dayOffset = 1; dayOffset <= 2; dayOffset++) {
-    const futureAK = new Date(akNow);
-    futureAK.setDate(futureAK.getDate() + dayOffset);
-    futureAK.setHours(14, 0, 0, 0);
-    const futureNight = getTonightWindow(futureAK, 64.84, -147.72);
-    let maxKp = 0;
-    for (const entry of forecastEntries) {
-      const entryAK = new Date(entry.time.getTime() + akOffset * 3600000);
-      if (entryAK >= futureNight.start && entryAK <= futureNight.end) {
-        if (entry.kp > maxKp) maxKp = entry.kp;
-      }
-    }
-    nightMaxKps.push(maxKp);
-  }
-
-  // Last night's max Kp (for "was last night good" section)
-  const yesterdayAK = new Date(akNow);
-  yesterdayAK.setDate(yesterdayAK.getDate() - 1);
-  yesterdayAK.setHours(14, 0, 0, 0);
-  const lastNight = getTonightWindow(yesterdayAK, 64.84, -147.72);
-  let lastNightMaxKp = 0;
-  for (const entry of forecastEntries) {
-    const entryAK = new Date(entry.time.getTime() + akOffset * 3600000);
-    if (entryAK >= lastNight.start && entryAK <= lastNight.end) {
-      if (entry.kp > lastNightMaxKp) lastNightMaxKp = entry.kp;
-    }
-  }
-
-  return { forecastEntries, tonightMaxKp, nightMaxKps, lastNightMaxKp, akNow };
+  return{fe,tMax,nMax,lnMax,an,moonPct};
 }
 
-// =====================================================================
-// ALASKA TIME
-// =====================================================================
-function getAKOffset(date) {
-  const year = date.getUTCFullYear();
-  const marchSecondSun = new Date(Date.UTC(year, 2, 8 + (7 - new Date(Date.UTC(year, 2, 8)).getUTCDay()) % 7, 11));
-  const novFirstSun = new Date(Date.UTC(year, 10, 1 + (7 - new Date(Date.UTC(year, 10, 1)).getUTCDay()) % 7, 10));
-  return (date >= marchSecondSun && date < novFirstSun) ? -8 : -9;
+function akOff(d){const y=d.getUTCFullYear(),m=new Date(Date.UTC(y,2,8+(7-new Date(Date.UTC(y,2,8)).getUTCDay())%7,11)),n=new Date(Date.UTC(y,10,1+(7-new Date(Date.UTC(y,10,1)).getUTCDay())%7,10));return(d>=m&&d<n)?-8:-9;}
+
+function darkWin(an,lat,lon){
+  const t=new Date(an);t.setHours(12,0,0,0);const tm=new Date(t);tm.setDate(tm.getDate()+1);
+  const st=SunCalc.getTimes(t,lat,lon),sr=SunCalc.getTimes(tm,lat,lon);
+  return{start:st.nauticalDusk||st.sunset,end:sr.nauticalDawn||sr.sunrise};
 }
 
-function getTonightWindow(akNow, lat, lon) {
-  const today = new Date(akNow); today.setHours(12, 0, 0, 0);
-  const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
-  const sunToday = SunCalc.getTimes(today, lat, lon);
-  const sunTomorrow = SunCalc.getTimes(tomorrow, lat, lon);
-  return {
-    start: sunToday.nauticalDusk || sunToday.sunset,
-    end: sunTomorrow.nauticalDawn || sunTomorrow.sunrise
-  };
+function fmt(d){return d.toLocaleTimeString('en-US',{timeZone:'America/Anchorage',hour:'numeric',minute:'2-digit',hour12:true});}
+
+// SCORING with cloud cover + moon
+function score(loc,maxKp,bz,moonPct){
+  let s=0;
+  if(maxKp>=loc.kpG+2)s+=50;else if(maxKp>=loc.kpG)s+=42;else if(maxKp>=loc.kpV+1)s+=30;else if(maxKp>=loc.kpV)s+=18;else s+=4;
+  if(bz<-10)s+=16;else if(bz<-5)s+=10;else if(bz<0)s+=4;
+  s+=15; // darkness
+
+  // Cloud cover adjustment
+  const cl=cloudData[loc.id];
+  let cloudPct=50; // default if no data
+  let cloudDesc='';
+  if(cl){cloudPct=cl.cover;cloudDesc=cl.desc;}
+  if(cloudPct<=15)s+=15;else if(cloudPct<=35)s+=10;else if(cloudPct<=60)s+=3;else if(cloudPct<=80)s-=5;else s-=12;
+
+  // Moon penalty
+  if(moonPct>80)s-=8;else if(moonPct>50)s-=4;
+
+  let lv,ll;
+  if(s>=62){lv='g';ll='Great chance';}
+  else if(s>=38){lv='p';ll='Possible';}
+  else if(s>=22){lv='c';ll='Worth checking';}
+  else{lv='u';ll='Unlikely';}
+
+  const dw=darkWin(new Date(new Date().getTime()+akOff(new Date())*3600000),loc.lat,loc.lon);
+  const v=verdict(loc,maxKp,bz,lv,cloudPct,cloudDesc,moonPct);
+  return{...loc,score:s,lv,ll,v,kp:maxKp,dw,cloudPct,cloudDesc,moonPct};
 }
 
-function formatAKTime(date) {
-  return date.toLocaleTimeString('en-US', { timeZone: 'America/Anchorage', hour: 'numeric', minute: '2-digit', hour12: true });
-}
+function verdict(loc,kp,bz,lv,cloudPct,cloudDesc,moonPct){
+  const cloudBit=cloudPct<=20?'Clear skies expected.':cloudPct<=40?'Partly cloudy — gaps should work.':cloudPct<=65?'Cloudy patches tonight — some breaks possible.':cloudPct<=85?'Mostly overcast — might clear up late.':'Heavy clouds expected — tough viewing.';
+  const moonBit=moonPct>80?' Bright moon may wash out fainter aurora.':moonPct>50?' Half moon in the sky — strong displays will still show.':'';
 
-// =====================================================================
-// SCORING
-// =====================================================================
-function scoreForLocation(loc, maxKp, bz) {
-  let score = 0;
-  if (maxKp >= loc.kpGood + 2) score += 60;
-  else if (maxKp >= loc.kpGood) score += 50;
-  else if (maxKp >= loc.kpVisible + 1) score += 35;
-  else if (maxKp >= loc.kpVisible) score += 20;
-  else score += 5;
-
-  if (bz < -10) score += 20;
-  else if (bz < -5) score += 12;
-  else if (bz < 0) score += 5;
-  score += 20; // darkness bonus
-
-  let level, levelLabel;
-  if (score >= 65) { level = 'great'; levelLabel = 'Great chance'; }
-  else if (score >= 40) { level = 'possible'; levelLabel = 'Possible'; }
-  else if (score >= 25) { level = 'cloudy'; levelLabel = 'Worth checking'; }
-  else { level = 'unlikely'; levelLabel = 'Unlikely'; }
-
-  const now = new Date();
-  const akOffset = getAKOffset(now);
-  const akNow = new Date(now.getTime() + akOffset * 3600000);
-  const darkWindow = getTonightWindow(akNow, loc.lat, loc.lon);
-  const verdict = makeVerdict(loc, maxKp, bz, level);
-
-  return { ...loc, score, level, levelLabel, verdict, kp: maxKp, darkWindow };
-}
-
-function makeVerdict(loc, kp, bz, level) {
-  if (level === 'great') {
-    if (kp >= loc.kpGood + 2) return `Strong solar activity tonight — expect vivid, dancing aurora. ${loc.name} needs Kp ${loc.kpVisible} and we're well above that.`;
-    return `Conditions look good tonight. Look north after dark for a solid display.`;
+  if(lv==='g'){
+    if(kp>=loc.kpG+2)return`Strong activity tonight — expect vivid, dancing aurora. ${cloudBit}${moonBit}`;
+    return`Good conditions lining up tonight. ${cloudBit} Look north after dark.${moonBit}`;
   }
-  if (level === 'possible') {
-    if (kp >= loc.kpVisible + 1) return `Activity is above the threshold for ${loc.name}. You might catch a glow on the horizon — worth stepping outside.`;
-    if (bz < -5) return `Solar wind is favorable even though activity is moderate. Could surprise you tonight.`;
-    return `Moderate activity — a faint display is possible. Keep an eye out after dark.`;
+  if(lv==='p'){
+    if(kp>=loc.kpV+1)return`Activity above the threshold for ${loc.name}. ${cloudBit} Worth stepping outside.${moonBit}`;
+    return`Moderate activity — a faint glow is possible. ${cloudBit}${moonBit}`;
   }
-  if (level === 'cloudy') {
-    if (kp >= loc.kpVisible) return `Activity is right at the edge for ${loc.name}. Quick check outside after dark — you might get lucky.`;
-    return `Activity is a bit low for here, but conditions can change fast. Not impossible.`;
+  if(lv==='c'){
+    if(cloudPct>70)return`Solar activity is there but clouds are the problem tonight. ${cloudBit} Keep checking — gaps happen.`;
+    return`Activity is at the edge for ${loc.name}. ${cloudBit} Quick check after dark — you might get lucky.${moonBit}`;
   }
-  return `Activity is below what ${loc.name} typically needs. Probably quiet tonight, but check back — storms ramp up fast.`;
+  if(cloudPct>70)return`Low activity and cloudy tonight. Not the night for ${loc.name}.`;
+  return`Activity below what ${loc.name} needs. Probably quiet, but storms can ramp up fast.${moonBit}`;
 }
 
-function getOutlookLevel(kp) {
-  if (kp >= 5) return { level: 'great', label: 'Great chance', desc: 'Strong activity expected' };
-  if (kp >= 4) return { level: 'possible', label: 'Good chance', desc: 'Moderate to strong activity' };
-  if (kp >= 3) return { level: 'possible', label: 'Possible', desc: 'Some activity expected' };
-  if (kp >= 2) return { level: 'cloudy', label: 'Maybe', desc: 'Mild activity — northern areas likely' };
-  if (kp > 0) return { level: 'unlikely', label: 'Quiet', desc: 'Low activity expected' };
-  return { level: 'unlikely', label: 'No data', desc: 'Forecast not yet available' };
+// IS IT DARK RIGHT NOW
+function renderBanner(){
+  const ban=document.getElementById('nowBanner');
+  const now=new Date();
+  const ao=akOff(now);
+  const an=new Date(now.getTime()+ao*3600000);
+  const month=an.getMonth(); // 0-indexed
+
+  // Summer check (May through mid-August)
+  if(month>=4&&month<=7){
+    ban.className='now-banner is-summer';
+    ban.innerHTML='☀️ Aurora season runs September through April. Alaska has near-24-hour daylight right now.';
+    ban.style.display='block';
+    return;
+  }
+
+  const sun=SunCalc.getTimes(now,64.84,-147.72);
+  const isDark=now<sun.sunrise||now>sun.sunset;
+  ban.style.display='block';
+  if(isDark){
+    ban.className='now-banner is-dark';
+    ban.innerHTML='🌙 It\'s dark in Alaska right now — go outside and look north!';
+  } else {
+    ban.className='now-banner is-light';
+    const dusk=sun.nauticalDusk||sun.sunset;
+    ban.innerHTML=`☀️ Daylight in Alaska right now. Gets dark around ${fmt(dusk)} — tonight's forecast is below.`;
+  }
 }
 
-// =====================================================================
 // RENDER DASHBOARD
-// =====================================================================
-function renderDashboard(forecasts, data) {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
+function renderDash(forecasts,data){
+  document.getElementById('loading').style.display='none';
+  document.getElementById('dash').style.display='block';
+  renderBanner();
 
-  forecasts.sort((a, b) => b.score - a.score);
-  allForecasts = forecasts;
-  bestSpotId = forecasts[0].id;
+  forecasts.sort((a,b)=>b.score-a.score);
+  AF=forecasts;bestId=forecasts[0].id;
 
-  const updateTime = new Date().toLocaleTimeString('en-US', { timeZone: 'America/Anchorage', hour: 'numeric', minute: '2-digit', hour12: true });
-  document.getElementById('lastUpdated').textContent = `Updated ${updateTime} Alaska time`;
+  document.getElementById('upd').textContent=`Updated ${fmt(new Date())} Alaska time · Moon ${data.moonPct}% illuminated`;
 
   // Hero
-  const best = forecasts[0];
-  const heroEl = document.getElementById('heroCard');
-  heroEl.className = `hero level-${best.level}`;
-  heroEl.onclick = () => navigateTo(best.id);
-  document.getElementById('heroLocation').textContent = best.name;
-  document.getElementById('heroVerdict').textContent = best.verdict;
-  document.getElementById('heroDetail').innerHTML = `<strong>Dark window:</strong> ${formatAKTime(best.darkWindow.start)} – ${formatAKTime(best.darkWindow.end)}`;
+  const b=forecasts[0];
+  const h=document.getElementById('heroCard');
+  h.className=`hero lv-${b.lv}`;h.onclick=()=>nav(b.id);
+  document.getElementById('heroLoc').textContent=b.name;
+  document.getElementById('heroV').textContent=b.v;
+  let heroExtra=`<strong>Dark window:</strong> ${fmt(b.dw.start)} – ${fmt(b.dw.end)}`;
+  if(b.cloudDesc)heroExtra+=` · <strong>Sky:</strong> ${b.cloudDesc}`;
+  document.getElementById('heroD').innerHTML=heroExtra;
 
-  // 3-night outlook
-  renderOutlook(data);
+  // Outlook
+  renderOL(data);
 
-  // Location cards
-  const grid = document.getElementById('locationsGrid');
-  grid.innerHTML = '';
-  for (const f of forecasts) {
-    const card = document.createElement('div');
-    card.className = `location-card level-${f.level}`;
-    card.onclick = () => navigateTo(f.id);
-    card.innerHTML = `
-      <div class="card-header">
-        <div class="card-location-name">${f.name}</div>
-        <div class="card-indicator"></div>
-      </div>
-      <div class="card-verdict">${f.verdict}</div>
-      <div class="card-meta">
-        <span>🌙 Dark by ${formatAKTime(f.darkWindow.start)}</span>
-        <span>${f.levelLabel}</span>
-      </div>`;
-    grid.appendChild(card);
+  // Cards
+  const g=document.getElementById('lgrid');g.innerHTML='';
+  for(const f of forecasts){
+    const d=document.createElement('div');
+    d.className=`lcard lv-${f.lv}`;d.onclick=()=>nav(f.id);
+    let meta=`<span>🌙 ${fmt(f.dw.start)}</span><span>${f.ll}</span>`;
+    if(f.cloudDesc)meta+=`<span>☁️ ${f.cloudDesc}</span>`;
+    if(f.drive&&f.drive!=='—')meta+=`<span>🚗 ${f.drive}</span>`;
+    d.innerHTML=`<div class="ch"><div class="cn">${f.name}</div><div class="ci"></div></div><div class="cv">${f.v}</div><div class="cm">${meta}</div>`;
+    g.appendChild(d);
   }
 
-  // Was last night good?
-  renderLastNight(data);
-
-  // Forecast chart
-  renderForecastChart(data.forecastEntries);
+  // Last night
+  renderLN(data);
 }
 
-function renderOutlook(data) {
-  const strip = document.getElementById('outlookStrip');
-  strip.innerHTML = '';
-  const now = new Date();
-  const akOffset = getAKOffset(now);
-  const akNow = new Date(now.getTime() + akOffset * 3600000);
-  const labels = ['Tonight', 'Tomorrow Night', ''];
-  const day3 = new Date(akNow); day3.setDate(day3.getDate() + 2);
-  labels[2] = day3.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'America/Anchorage' }) + ' Night';
-
-  for (let i = 0; i < 3; i++) {
-    const o = getOutlookLevel(data.nightMaxKps[i] || 0);
-    const card = document.createElement('div');
-    card.className = 'outlook-card' + (i === 0 ? ' is-tonight' : '');
-    card.innerHTML = `<div class="outlook-day">${labels[i]}</div><div class="outlook-indicator level-${o.level}"></div><div class="outlook-label">${o.label}</div><div class="outlook-desc">${o.desc}</div>`;
-    strip.appendChild(card);
+function renderOL(data){
+  const s=document.getElementById('olstrip');s.innerHTML='';
+  const now=new Date(),ao=akOff(now),an=new Date(now.getTime()+ao*3600000);
+  const labs=['Tonight','Tomorrow Night',''];
+  const d3=new Date(an);d3.setDate(d3.getDate()+2);
+  labs[2]=d3.toLocaleDateString('en-US',{weekday:'long',timeZone:'America/Anchorage'})+' Night';
+  for(let i=0;i<3;i++){
+    const kp=data.nMax[i]||0;
+    let lv,lb,ds;
+    if(kp>=5){lv='g';lb='Great chance';ds='Strong activity';}
+    else if(kp>=4){lv='p';lb='Good chance';ds='Moderate-strong';}
+    else if(kp>=3){lv='p';lb='Possible';ds='Some activity';}
+    else if(kp>=2){lv='c';lb='Maybe';ds='Mild — northern areas';}
+    else if(kp>0){lv='u';lb='Quiet';ds='Low activity';}
+    else{lv='u';lb='No data';ds='Forecast pending';}
+    const cd=document.createElement('div');cd.className='olcard'+(i===0?' ist':'');
+    cd.innerHTML=`<div class="olday">${labs[i]}</div><div class="oldot d${lv}"></div><div class="ollbl">${lb}</div><div class="oldesc">${ds}</div>`;
+    s.appendChild(cd);
   }
 }
 
-function renderLastNight(data) {
-  const section = document.getElementById('lastnightSection');
-  const kp = data.lastNightMaxKp;
-  if (kp <= 0) { section.style.display = 'none'; return; }
-  section.style.display = 'block';
-  const title = document.getElementById('lastnightTitle');
-  const desc = document.getElementById('lastnightDesc');
-
-  if (kp >= 5) {
-    title.textContent = '🌌 Last night was a strong aurora night!';
-    desc.textContent = `Activity peaked at Kp ${kp.toFixed(1)} overnight — that's a solid geomagnetic storm. Aurora was likely visible across most of Alaska, including Anchorage and the Kenai Peninsula. If you were out and saw it, nice catch!`;
-  } else if (kp >= 3) {
-    title.textContent = '🌌 Last night had some aurora activity';
-    desc.textContent = `Activity reached Kp ${kp.toFixed(1)} overnight. Fairbanks and Denali probably had a good show. If you missed it, tonight's forecast is above — check if you get another shot.`;
-  } else {
-    title.textContent = '🌌 Quiet night last night';
-    desc.textContent = `Activity only reached Kp ${kp.toFixed(1)} — mostly too low for visible aurora except possibly in Fairbanks. Conditions change daily though.`;
-  }
+function renderLN(data){
+  const sec=document.getElementById('lnSec'),kp=data.lnMax;
+  if(kp<=0){sec.style.display='none';return;}
+  sec.style.display='block';
+  const t=document.getElementById('lnTitle'),d=document.getElementById('lnDesc');
+  if(kp>=5){t.textContent='Last night was a strong aurora night!';d.textContent=`Activity peaked at Kp ${kp.toFixed(1)} — a solid storm. Aurora was likely visible across most of Alaska. If you saw it, nice catch!`;}
+  else if(kp>=3){t.textContent='Some activity last night';d.textContent=`Reached Kp ${kp.toFixed(1)} overnight. Fairbanks and Denali probably had a show. Check tonight's forecast above for another shot.`;}
+  else{t.textContent='Quiet night last night';d.textContent=`Only Kp ${kp.toFixed(1)} — too low for most locations except possibly Fairbanks.`;}
 }
 
-function renderForecastChart(entries) {
-  const chart = document.getElementById('forecastChart');
-  const legend = document.getElementById('forecastLegend');
-  chart.innerHTML = '';
+// DETAIL PAGE
+function renderDet(id){
+  const f=AF.find(l=>l.id===id);if(!f)return;
+  document.getElementById('dash').style.display='none';
+  const det=document.getElementById('det');det.className='det active';
 
-  if (!entries || entries.length === 0) {
-    chart.innerHTML = '<div class="forecast-empty">Forecast data is loading from NOAA — this sometimes takes a moment. Refresh to try again.</div>';
-    legend.style.display = 'none';
-    return;
-  }
+  let spotsH='';
+  if(f.spots&&f.spots.length)spotsH=`<div class="icard"><h3>📍 Best viewing spots</h3><ul class="slist">${f.spots.map(s=>`<li><div class="sn">${s.n}</div><div class="sd">${s.d}</div></li>`).join('')}</ul></div>`;
 
-  const now = new Date();
-  const windowStart = new Date(now.getTime() - 12 * 3600000);
-  const windowEnd = new Date(now.getTime() + 72 * 3600000);
-  const filtered = entries.filter(e => e.time >= windowStart && e.time <= windowEnd);
-  const toShow = filtered.slice(0, 32);
+  const others=AF.filter(l=>l.id!==id);
+  const chips=others.map(o=>{const c=o.lv==='g'?'var(--grn)':o.lv==='p'?'var(--ylw)':o.lv==='c'?'var(--orn)':'var(--red)';return`<div class="ochip" onclick="nav('${o.id}')"><div class="cdot" style="background:${c}"></div>${o.name}</div>`;}).join('');
 
-  if (toShow.length === 0) {
-    chart.innerHTML = '<div class="forecast-empty">No forecast data available for the next 3 days right now. NOAA data refreshes periodically.</div>';
-    legend.style.display = 'none';
-    return;
-  }
-
-  legend.style.display = 'flex';
-  const refLat = 64.84, refLon = -147.72;
-
-  for (let idx = 0; idx < toShow.length; idx++) {
-    const entry = toShow[idx];
-    const group = document.createElement('div');
-    group.className = 'forecast-bar-group';
-    const bar = document.createElement('div');
-    const kp = entry.kp;
-    bar.style.height = Math.max(5, (kp / 9) * 100) + '%';
-    if (kp >= 6) bar.className = 'forecast-bar kp-storm';
-    else if (kp >= 4) bar.className = 'forecast-bar kp-high';
-    else if (kp >= 2) bar.className = 'forecast-bar kp-mod';
-    else bar.className = 'forecast-bar kp-low';
-
-    const sunTimes = SunCalc.getTimes(entry.time, refLat, refLon);
-    const isNight = entry.time < sunTimes.sunrise || entry.time > sunTimes.sunset;
-    bar.classList.add(isNight ? 'is-night' : 'is-day');
-    bar.title = `${entry.time.toLocaleString('en-US',{timeZone:'America/Anchorage',month:'short',day:'numeric',hour:'numeric',hour12:true})} — Kp ${kp.toFixed(1)}${isNight?' (dark)':' (daylight)'}`;
-    group.appendChild(bar);
-
-    if (idx % 4 === 0) {
-      const lbl = document.createElement('div');
-      lbl.className = 'forecast-time' + (isNight && Math.abs(entry.time - now) < 18*3600000 ? ' is-tonight' : '');
-      lbl.textContent = entry.time.toLocaleDateString('en-US',{timeZone:'America/Anchorage',weekday:'short'}) + ' ' + entry.time.toLocaleTimeString('en-US',{timeZone:'America/Anchorage',hour:'numeric',hour12:true});
-      group.appendChild(lbl);
+  // Location-specific 3-night
+  let olH='';
+  if(GD&&GD.nMax){
+    const nts=['Tonight','Tomorrow',''];
+    const d3=new Date(GD.an);d3.setDate(d3.getDate()+2);nts[2]=d3.toLocaleDateString('en-US',{weekday:'short',timeZone:'America/Anchorage'});
+    olH='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:18px;">';
+    for(let i=0;i<3;i++){
+      const nk=GD.nMax[i]||0;
+      let nl;if(nk>=f.kpG)nl='g';else if(nk>=f.kpV+1)nl='p';else if(nk>=f.kpV)nl='c';else nl='u';
+      const nlb=nl==='g'?'Great':nl==='p'?'Possible':nl==='c'?'Maybe':'Unlikely';
+      const dc=nl==='g'?'var(--grn)':nl==='p'?'var(--ylw)':nl==='c'?'var(--orn)':'var(--red)';
+      olH+=`<div style="text-align:center"><div style="font-size:.7rem;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">${nts[i]}</div><div style="width:14px;height:14px;border-radius:50%;background:${dc};margin:0 auto 6px;box-shadow:0 0 10px ${dc}"></div><div style="font-size:.8rem;font-weight:500">${nlb}</div></div>`;
     }
-    chart.appendChild(group);
+    olH+='</div>';
   }
-}
 
-// =====================================================================
-// LOCATION DETAIL PAGE
-// =====================================================================
-function renderLocationDetail(locationId) {
-  const f = allForecasts.find(l => l.id === locationId);
-  if (!f) return;
+  const moonNote=f.moonPct>80?'🌕 Bright moon tonight — strong aurora will still be visible but faint displays may be washed out.':f.moonPct>50?'🌗 Half moon — won\'t block strong aurora but fainter displays will be harder to see.':f.moonPct>20?'🌒 Slim moon — good conditions for seeing even faint aurora.':'🌑 New moon or very thin crescent — ideal dark sky conditions!';
 
-  document.getElementById('dashboard').style.display = 'none';
-  const detail = document.getElementById('locationDetail');
-  detail.className = 'location-detail active';
+  det.innerHTML=`
+    <button class="back" onclick="nav('')">← All locations</button>
+    <div class="olocs">${chips}</div>
+    <div class="dhero lv-${f.lv}">
+      <div class="dname">${f.name}</div>
+      <div class="dverdict">${f.v}</div>
+      <div class="dstats">
+        <div class="dstat"><div class="dsv">${f.ll}</div><div class="dsl">Tonight</div></div>
+        <div class="dstat"><div class="dsv">${fmt(f.dw.start)}</div><div class="dsl">Gets dark</div></div>
+        <div class="dstat"><div class="dsv">${f.cloudDesc||'—'}</div><div class="dsl">Sky tonight</div></div>
+      </div>
+      ${olH}
+      <button class="sbtn" onclick="share('${f.id}')">📤 Share forecast</button>
+    </div>
 
-  // Build spots HTML
-  let spotsHTML = '';
-  if (f.spots && f.spots.length > 0) {
-    spotsHTML = `<div class="info-card">
-      <h3>📍 Best viewing spots</h3>
-      <ul class="spot-list">
-        ${f.spots.map(s => `<li><div class="spot-name">${s.name}</div><div class="spot-desc">${s.desc}</div></li>`).join('')}
-      </ul>
+    ${spotsH}
+
+    <div class="icard"><h3>🌙 Viewing window tonight</h3><p>${fmt(f.dw.start)} to ${fmt(f.dw.end)}. Darkest hours (11 PM – 3 AM) tend to be best, but aurora can appear any time it's dark. Give your eyes 15–20 min to adjust. Your phone camera picks up aurora before your eyes — try a long-exposure shot if unsure.</p></div>
+    <div class="icard"><h3>🌕 Moon conditions</h3><p>${moonNote} Moon is ${f.moonPct}% illuminated tonight.</p></div>
+    ${f.drive&&f.drive!=='—'?`<div class="icard"><h3>🚗 Getting there</h3><p>${f.drive}. ${f.id==='juneau'?'Accessible by air or Alaska Marine Highway ferry only — no road connection.':'Drive time from Anchorage via the Parks Highway or Seward Highway depending on direction.'}</p></div>`:''}
+    <div class="icard"><h3>🏔️ About ${f.name}</h3><p>${f.seo}</p></div>
+    <div class="icard nerd" onclick="this.querySelector('.ndata').style.display=this.querySelector('.ndata').style.display==='block'?'none':'block'"><h3>🔬 Technical details <span style="font-weight:300;color:var(--t3);font-size:.78rem">(tap)</span></h3><div class="ndata"><p><strong>Current Kp:</strong> ${cKp.toFixed(1)}<br><strong>Forecast Kp tonight:</strong> ${f.kp.toFixed(1)}<br><strong>Min Kp for visibility:</strong> ${f.kpV}<br><strong>Kp for strong display:</strong> ${f.kpG}<br><strong>Solar wind Bz:</strong> ${cBz.toFixed(1)} nT ${cBz<-5?'(southward — favorable)':cBz<0?'(slightly southward)':'(northward — less favorable)'}<br><strong>Cloud cover est:</strong> ${f.cloudPct}%<br><strong>Moon:</strong> ${f.moonPct}%<br><strong>Score:</strong> ${f.score}/100<br><strong>Coords:</strong> ${f.lat}°N, ${Math.abs(f.lon)}°W</p></div></div>
+
+    <div class="asec" style="margin-top:20px">
+      <div class="atitle">Get ${f.name} aurora alerts</div>
+      <div class="adesc">We'll email you when conditions look great here.</div>
+      <div class="aform" id="aformD"><input type="email" class="ainput" placeholder="your@email.com" id="aEmailD"><button class="abtn" onclick="doSignup('aEmailD','aformD','aokD','aerrD','${f.name}')">Notify me</button></div>
+      <div class="aok" id="aokD">You're on the list!</div>
+      <div class="aerr" id="aerrD"></div>
     </div>`;
-  }
 
-  // Other locations chips
-  const others = allForecasts.filter(l => l.id !== locationId);
-  const chipsHTML = others.map(o => {
-    const dotColor = o.level === 'great' ? 'var(--green-glow)' : o.level === 'possible' ? 'var(--yellow-glow)' : o.level === 'cloudy' ? 'var(--orange-glow)' : 'var(--red-glow)';
-    return `<div class="other-loc-chip" onclick="navigateTo('${o.id}')"><div class="chip-dot" style="background:${dotColor}"></div>${o.name}</div>`;
-  }).join('');
-
-  // 3-night outlook specific to this location
-  let outlookHTML = '';
-  if (globalData && globalData.nightMaxKps) {
-    const nights = ['Tonight', 'Tomorrow', ''];
-    const akNow = globalData.akNow;
-    const d3 = new Date(akNow); d3.setDate(d3.getDate() + 2);
-    nights[2] = d3.toLocaleDateString('en-US', { weekday: 'short', timeZone: 'America/Anchorage' });
-
-    outlookHTML = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:20px;">';
-    for (let i = 0; i < 3; i++) {
-      const nkp = globalData.nightMaxKps[i] || 0;
-      // Score against THIS location's thresholds
-      let nlevel;
-      if (nkp >= f.kpGood) nlevel = 'great';
-      else if (nkp >= f.kpVisible + 1) nlevel = 'possible';
-      else if (nkp >= f.kpVisible) nlevel = 'cloudy';
-      else nlevel = 'unlikely';
-      const nlabel = nlevel === 'great' ? 'Great' : nlevel === 'possible' ? 'Possible' : nlevel === 'cloudy' ? 'Maybe' : 'Unlikely';
-      const dotColor = nlevel === 'great' ? 'var(--green-glow)' : nlevel === 'possible' ? 'var(--yellow-glow)' : nlevel === 'cloudy' ? 'var(--orange-glow)' : 'var(--red-glow)';
-      outlookHTML += `<div style="text-align:center;"><div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em;">${nights[i]}</div><div style="width:14px;height:14px;border-radius:50%;background:${dotColor};margin:0 auto 6px;box-shadow:0 0 10px ${dotColor};"></div><div style="font-size:0.82rem;font-weight:500;">${nlabel}</div></div>`;
-    }
-    outlookHTML += '</div>';
-  }
-
-  detail.innerHTML = `
-    <button class="back-btn" onclick="navigateTo('')">← All locations</button>
-    <div class="other-locations">${chipsHTML}</div>
-
-    <div class="detail-hero level-${f.level}">
-      <div class="detail-location-name">${f.name}</div>
-      <div class="detail-verdict-large">${f.verdict}</div>
-      <div class="detail-stats">
-        <div class="detail-stat"><div class="detail-stat-value">${f.levelLabel}</div><div class="detail-stat-label">Tonight</div></div>
-        <div class="detail-stat"><div class="detail-stat-value">${formatAKTime(f.darkWindow.start)}</div><div class="detail-stat-label">Gets dark</div></div>
-        <div class="detail-stat"><div class="detail-stat-value">Kp ${f.kpVisible}+</div><div class="detail-stat-label">Min needed</div></div>
-      </div>
-      ${outlookHTML}
-      <button class="share-btn" onclick="shareForecast('${f.id}')">📤 Share tonight's forecast</button>
-    </div>
-
-    ${spotsHTML}
-
-    <div class="info-card">
-      <h3>🌙 Best viewing window tonight</h3>
-      <p>${formatAKTime(f.darkWindow.start)} to ${formatAKTime(f.darkWindow.end)}. The darkest hours (usually 11 PM – 3 AM) tend to be best, but aurora can appear any time it's dark. Give your eyes 15–20 minutes to adjust. Your phone camera will often pick up aurora before your eyes do — try a long-exposure shot if you're not sure.</p>
-    </div>
-
-    <div class="info-card">
-      <h3>🏔️ About this location</h3>
-      <p>${f.seoDesc}</p>
-    </div>
-
-    <div class="info-card detail-nerd" onclick="this.querySelector('.nerd-data').style.display=this.querySelector('.nerd-data').style.display==='block'?'none':'block'">
-      <h3>🔬 Technical details <span style="font-weight:300;color:var(--text-muted);font-size:0.8rem">(tap to expand)</span></h3>
-      <div class="nerd-data">
-        <p>
-          <strong>Current Kp:</strong> ${currentKp.toFixed(1)}<br>
-          <strong>Tonight's forecast Kp:</strong> ${f.kp.toFixed(1)}<br>
-          <strong>Min Kp for visibility:</strong> ${f.kpVisible}<br>
-          <strong>Kp for strong display:</strong> ${f.kpGood}<br>
-          <strong>Solar wind Bz:</strong> ${currentBz.toFixed(1)} nT ${currentBz < -5 ? '(southward — favorable)' : currentBz < 0 ? '(slightly southward — neutral)' : '(northward — less favorable)'}<br>
-          <strong>Composite score:</strong> ${f.score}/100<br>
-          <strong>Coordinates:</strong> ${f.lat}°N, ${Math.abs(f.lon)}°W
-        </p>
-      </div>
-    </div>
-
-    <div class="alert-section" style="margin-top:24px;">
-      <div class="alert-title">Get ${f.name} aurora alerts</div>
-      <div class="alert-desc">We'll email you when conditions look great here.</div>
-      <div class="alert-form">
-        <input type="email" class="alert-input" placeholder="your@email.com" id="alertEmailDetail">
-        <button class="alert-btn" onclick="handleAlertSignupDetail('${f.id}')">Notify me</button>
-      </div>
-    </div>
-  `;
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.title=`${f.name} Aurora Forecast — Alaska Glow`;
 }
 
-// =====================================================================
-// NAVIGATION (hash-based)
-// =====================================================================
-function navigateTo(locationId) {
-  if (locationId) {
-    window.location.hash = '#/' + locationId;
-  } else {
-    window.location.hash = '';
-    document.getElementById('locationDetail').className = 'location-detail';
-    document.getElementById('dashboard').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+// NAVIGATION
+function nav(id){
+  if(id){window.location.hash='#/'+id;}
+  else{window.location.hash='';document.getElementById('det').className='det';document.getElementById('dash').style.display='block';document.title='Alaska Glow — Aurora Forecast for Tonight';window.scrollTo({top:0,behavior:'smooth'});}
 }
+window.addEventListener('hashchange',()=>{
+  const h=window.location.hash;
+  if(h.startsWith('#/')){const id=h.slice(2);if(AF.find(l=>l.id===id))renderDet(id);}
+  else{document.getElementById('det').className='det';if(AF.length)document.getElementById('dash').style.display='block';document.title='Alaska Glow — Aurora Forecast for Tonight';}
+});
 
-function handleHashChange() {
-  const hash = window.location.hash;
-  if (hash.startsWith('#/')) {
-    const locId = hash.slice(2);
-    if (allForecasts.length > 0 && allForecasts.find(l => l.id === locId)) {
-      renderLocationDetail(locId);
-      // Update page title for SEO/sharing
-      const loc = LOCATIONS.find(l => l.id === locId);
-      if (loc) document.title = `${loc.seoTitle} — Alaska Glow`;
-    }
-  } else {
-    document.getElementById('locationDetail').className = 'location-detail';
-    if (allForecasts.length > 0) {
-      document.getElementById('dashboard').style.display = 'block';
-    }
-    document.title = 'Alaska Glow — Aurora Forecast for Tonight';
-  }
-}
-
-window.addEventListener('hashchange', handleHashChange);
-
-// =====================================================================
 // SHARING
-// =====================================================================
-async function shareForecast(locationId) {
-  const f = allForecasts.find(l => l.id === locationId);
-  if (!f) return;
-  const text = `Aurora forecast for ${f.name} tonight: ${f.levelLabel} — ${f.verdict.split('.')[0]}.\n\nCheck conditions → alaskaglow.com/#/${f.id}`;
-  if (navigator.share) {
-    try { await navigator.share({ title: `Aurora Forecast — ${f.name}`, text, url: `https://alaskaglow.com/#/${f.id}` }); } catch(e) {}
-  } else {
-    try { await navigator.clipboard.writeText(text); alert('Forecast copied to clipboard!'); } catch(e) {}
+async function share(id){
+  const f=AF.find(l=>l.id===id);if(!f)return;
+  const t=`Aurora forecast for ${f.name} tonight: ${f.ll}. ${f.cloudDesc||''}\n\nCheck conditions → alaskaglow.com/#/${f.id}`;
+  if(navigator.share){try{await navigator.share({title:`Aurora — ${f.name}`,text:t,url:`https://alaskaglow.com/#/${f.id}`});}catch(e){}}
+  else{try{await navigator.clipboard.writeText(t);alert('Copied!');}catch(e){}}
+}
+
+// EMAIL SIGNUP (Resend via Netlify Function)
+async function doSignup(inputId,formId,okId,errId,location){
+  const email=document.getElementById(inputId).value;
+  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  const errEl=document.getElementById(errId);
+  errEl.style.display='none';
+  try{
+    const res=await fetch('/.netlify/functions/subscribe',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,location})
+    });
+    if(res.ok){
+      document.getElementById(formId).style.display='none';
+      document.getElementById(okId).style.display='block';
+    }else{
+      const data=await res.json().catch(()=>({}));
+      // Fallback: save locally if function not deployed yet
+      const s=JSON.parse(localStorage.getItem('ag_signups')||'[]');
+      s.push({email,location,date:new Date().toISOString()});
+      localStorage.setItem('ag_signups',JSON.stringify(s));
+      document.getElementById(formId).style.display='none';
+      document.getElementById(okId).style.display='block';
+    }
+  }catch(e){
+    // Offline fallback
+    const s=JSON.parse(localStorage.getItem('ag_signups')||'[]');
+    s.push({email,location,date:new Date().toISOString()});
+    localStorage.setItem('ag_signups',JSON.stringify(s));
+    document.getElementById(formId).style.display='none';
+    document.getElementById(okId).style.display='block';
   }
 }
 
-// =====================================================================
-// ALERT SIGNUPS
-// =====================================================================
-function handleAlertSignup() {
-  const email = document.getElementById('alertEmail').value;
-  if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
-  const signups = JSON.parse(localStorage.getItem('ag_signups') || '[]');
-  signups.push({ email, location: 'all', date: new Date().toISOString() });
-  localStorage.setItem('ag_signups', JSON.stringify(signups));
-  document.getElementById('alertForm').style.display = 'none';
-  document.getElementById('alertSuccess').style.display = 'block';
-}
-
-function handleAlertSignupDetail(locId) {
-  const input = document.getElementById('alertEmailDetail');
-  if (!input) return;
-  const email = input.value;
-  if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
-  const signups = JSON.parse(localStorage.getItem('ag_signups') || '[]');
-  signups.push({ email, location: locId, date: new Date().toISOString() });
-  localStorage.setItem('ag_signups', JSON.stringify(signups));
-  input.parentElement.innerHTML = '<div style="color:var(--aurora-green);font-size:0.9rem;margin-top:8px;">You\'re on the list!</div>';
-}
-
-// =====================================================================
 // STARS
-// =====================================================================
-function generateStars() {
-  const c = document.getElementById('stars');
-  for (let i = 0; i < 80; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    s.style.left = Math.random()*100+'%';
-    s.style.top = Math.random()*60+'%';
-    s.style.animationDelay = Math.random()*3+'s';
-    s.style.animationDuration = (2+Math.random()*3)+'s';
-    s.style.width = s.style.height = (1+Math.random()*1.5)+'px';
-    c.appendChild(s);
-  }
-}
+function genStars(){const c=document.getElementById('stars');for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*60+'%';s.style.animationDelay=Math.random()*3+'s';s.style.animationDuration=(2+Math.random()*3)+'s';s.style.width=s.style.height=(1+Math.random()*1.5)+'px';c.appendChild(s);}}
 
-// =====================================================================
 // INIT
-// =====================================================================
-async function init() {
-  generateStars();
-  try {
-    const data = await loadData();
-    globalData = data;
-    const forecasts = LOCATIONS.map(loc => scoreForLocation(loc, data.tonightMaxKp, currentBz));
-    renderDashboard(forecasts, data);
-    // Check if URL has a location hash
-    handleHashChange();
-  } catch(e) {
-    console.error('Init error:', e);
-    document.getElementById('loading').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-secondary);"><h2 style="font-size:1.1rem;margin-bottom:8px;">Couldn\'t load aurora data</h2><p style="color:var(--text-muted);">NOAA servers may be temporarily unavailable. Refresh to try again.</p></div>';
+async function init(){
+  genStars();
+  try{
+    const data=await loadData();GD=data;
+    const fc=L.map(l=>score(l,data.tMax,cBz,data.moonPct));
+    renderDash(fc,data);
+    // Handle hash
+    const h=window.location.hash;
+    if(h.startsWith('#/')){const id=h.slice(2);if(AF.find(l=>l.id===id))renderDet(id);}
+  }catch(e){
+    console.error(e);
+    document.getElementById('loading').innerHTML='<div style="text-align:center;padding:40px;color:var(--t2)"><h2 style="font-size:1.1rem;margin-bottom:8px">Couldn\'t load aurora data</h2><p style="color:var(--t3)">NOAA may be temporarily unavailable. Refresh to try again.</p></div>';
   }
 }
-
 init();
 </script>
 </body>
