@@ -478,6 +478,80 @@
     border-radius: 2px;
   }
 
+  /* 3-Night Outlook */
+  .outlook-section {
+    margin: 28px 0 8px;
+  }
+
+  .outlook-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  .outlook-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 14px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .outlook-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .outlook-card.is-tonight {
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .outlook-day {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .outlook-indicator {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+  }
+
+  .outlook-indicator.level-great {
+    background: var(--green-glow);
+    box-shadow: 0 0 16px var(--green-glow);
+  }
+  .outlook-indicator.level-possible {
+    background: var(--yellow-glow);
+    box-shadow: 0 0 16px var(--yellow-glow);
+  }
+  .outlook-indicator.level-cloudy {
+    background: var(--orange-glow);
+    box-shadow: 0 0 16px var(--orange-glow);
+  }
+  .outlook-indicator.level-unlikely {
+    background: var(--red-glow);
+    box-shadow: 0 0 12px var(--red-glow);
+  }
+
+  .outlook-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .outlook-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
   /* Alert signup */
   .alert-section {
     margin: 32px 0;
@@ -855,6 +929,12 @@
       <div class="hero-detail" id="heroDetail"></div>
     </div>
 
+    <!-- 3-Night Outlook -->
+    <div class="outlook-section">
+      <div class="section-label">3-Night Outlook</div>
+      <div class="outlook-strip" id="outlookStrip"></div>
+    </div>
+
     <div class="section-label">All locations tonight</div>
 
     <div class="locations-grid" id="locationsGrid"></div>
@@ -1025,7 +1105,25 @@ async function loadData() {
   // If we have no forecast data for tonight, use current Kp
   if (tonightMaxKp === 0) tonightMaxKp = currentKp;
 
-  return { forecastEntries, tonightMaxKp, akNow };
+  // Compute max Kp for tomorrow night and night after
+  // Use Fairbanks as reference for dark windows
+  const nightMaxKps = [tonightMaxKp];
+  for (let dayOffset = 1; dayOffset <= 2; dayOffset++) {
+    const futureAK = new Date(akNow);
+    futureAK.setDate(futureAK.getDate() + dayOffset);
+    futureAK.setHours(14, 0, 0, 0); // afternoon so getTonightWindow looks forward
+    const futureNight = getTonightWindow(futureAK, 64.84, -147.72);
+    let maxKp = 0;
+    for (const entry of forecastEntries) {
+      const entryAK = new Date(entry.time.getTime() + akOffset * 3600000);
+      if (entryAK >= futureNight.start && entryAK <= futureNight.end) {
+        if (entry.kp > maxKp) maxKp = entry.kp;
+      }
+    }
+    nightMaxKps.push(maxKp);
+  }
+
+  return { forecastEntries, tonightMaxKp, nightMaxKps, akNow };
 }
 
 // ============================================================
@@ -1218,7 +1316,63 @@ function renderDashboard(forecasts, data) {
   }
 
   // Render forecast chart
+  renderOutlook(data);
   renderForecastChart(data.forecastEntries);
+}
+
+function renderOutlook(data) {
+  const strip = document.getElementById('outlookStrip');
+  strip.innerHTML = '';
+
+  const nightLabels = ['Tonight', 'Tomorrow', ''];
+  const now = new Date();
+  const akOffset = getAKOffset(now);
+  const akNow = new Date(now.getTime() + akOffset * 3600000);
+
+  // Get day name for night 3
+  const day3 = new Date(akNow);
+  day3.setDate(day3.getDate() + 2);
+  nightLabels[2] = day3.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'America/Anchorage' });
+
+  // Use Fairbanks thresholds as general reference for the outlook
+  // (Kp 1 visible, Kp 3 good)
+  const refKpVisible = 2; // average across locations
+  const refKpGood = 4;
+
+  for (let i = 0; i < 3; i++) {
+    const kp = data.nightMaxKps[i] || 0;
+
+    let level, label, desc;
+    if (kp >= refKpGood + 1) {
+      level = 'great'; label = 'Great chance';
+      desc = 'Strong activity expected';
+    } else if (kp >= refKpGood) {
+      level = 'possible'; label = 'Good chance';
+      desc = 'Moderate to strong activity';
+    } else if (kp >= refKpVisible + 1) {
+      level = 'possible'; label = 'Possible';
+      desc = 'Some activity expected';
+    } else if (kp >= refKpVisible) {
+      level = 'cloudy'; label = 'Maybe';
+      desc = 'Mild activity — Fairbanks likely';
+    } else if (kp > 0) {
+      level = 'unlikely'; label = 'Quiet';
+      desc = 'Low activity expected';
+    } else {
+      level = 'unlikely'; label = 'No data';
+      desc = 'Forecast not available yet';
+    }
+
+    const card = document.createElement('div');
+    card.className = 'outlook-card' + (i === 0 ? ' is-tonight' : '');
+    card.innerHTML = `
+      <div class="outlook-day">${nightLabels[i]}</div>
+      <div class="outlook-indicator level-${level}"></div>
+      <div class="outlook-label">${label}</div>
+      <div class="outlook-desc">${desc}</div>
+    `;
+    strip.appendChild(card);
+  }
 }
 
 function renderForecastChart(entries) {
